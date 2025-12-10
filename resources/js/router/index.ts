@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Login from '@/Pages/Auth/Login.vue'; // Скоро создадим
+import Login from '@/Pages/Auth/Login.vue'; // Логин
+import NotFound from '../Pages/NotFound.vue'; // 404
 import { useAuthStore } from '@/stores/auth';
 
 const routes = [
@@ -13,7 +14,14 @@ const routes = [
         path: '/',
         name: 'home',
         component: () => import('@/Pages/Home.vue'), // Ленивая загрузка
-        meta: { requiresAuth: true } // Пометка: только для своих
+        meta: { requiresAuth: true } // Пометка: только для авторизованных
+    },
+    //  404 (ВСЕГДА ПОСЛЕДНЯЯ)
+    {
+        path: '/:pathMatch(.*)*', // Регулярка "всё остальное"
+        name: 'not-found',
+        component: NotFound,
+        meta: { requiresAuth: true }
     }
 ];
 
