@@ -1,23 +1,21 @@
-<script setup>
-import { ref } from 'vue';
-
-const count = ref(0);
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
 </script>
 
 <template>
-    <div class="min-h-screen bg-zinc-900 text-zinc-100 flex items-center justify-center">
+    <!--
+      h-screen: на всю высоту
+      bg-background: цвет фона из темы shadcn (проверка CSS переменных)
+      text-foreground: цвет текста (проверка CSS переменных)
+    -->
+    <div class="flex h-screen w-full items-center justify-center bg-background text-foreground">
         <div class="text-center space-y-4">
-            <h1 class="text-4xl font-bold text-emerald-500">
-                Laravel <span class="text-zinc-100">+</span> Vue 3
-            </h1>
-            <p class="text-zinc-400">Kanban Board Setup</p>
+            <h1 class="text-2xl font-bold">Zefirello MVP</h1>
+            <p class="text-muted-foreground">System check...</p>
 
-            <button
-                @click="count++"
-                class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg font-medium transition"
-            >
-                Counter: {{ count }}
-            </button>
+            <Button>
+                Button works!
+            </Button>
         </div>
     </div>
 </template>
