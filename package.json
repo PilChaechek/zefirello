@@ -9,7 +9,7 @@
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
         "@types/node": "^24.10.2",
-        "axios": "^1.11.0",
+        "axios": "^1.13.2",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^2.0.0",
         "tailwindcss": "^4.0.0",
@@ -23,8 +23,11 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "lucide-vue-next": "^0.556.0",
+        "pinia": "^3.0.4",
         "reka-ui": "^2.6.1",
         "tailwind-merge": "^3.4.0",
-        "vue": "^3.5.25"
+        "vue": "^3.5.25",
+        "vue-router": "^4.6.3",
+        "zod": "^4.1.13"
     }
 }

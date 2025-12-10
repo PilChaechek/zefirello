@@ -9,6 +9,7 @@
 
 ## Frontend (Vue 3 SPA)
 - `Vue 3` (Composition API `<script setup>`).
+- Typescript
 - Build: `Vite`.
 - Router: `Vue Router`.
 - State Management: `Pinia` (Store) https://github.com/vuejs/pinia
@@ -16,7 +17,7 @@
 - Code Quality: `ESLint + Prettier`
 
 ## UI/UX & Styling
-- `TailwindCSS`
+- `TailwindCSS` v4
 - Component Library: `shadcn-vue` https://github.com/unovue/shadcn-vue
 - Иконки: ` lucide-vue-next` https://github.com/lucide-icons/lucide
 - Content Editor: Tiptap (Headless WYSIWYG редактор для описания задач) https://github.com/ueberdosis/tiptap
