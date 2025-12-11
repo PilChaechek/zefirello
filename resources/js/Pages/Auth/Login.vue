@@ -1,95 +1,144 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import { z } from 'zod';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+
+import logoCompany from '@/assets/images/zefirello.svg';
+
+// Shadcn UI Components
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+    Field,
+    FieldGroup,
+    FieldLabel,
+    FieldError,
+} from '@/components/ui/field';
 
 const auth = useAuthStore();
 const router = useRouter();
 
-// 1. Схема валидации (Правила)
-const loginSchema = z.object({
+// 1. Схема валидации
+const loginSchema = toTypedSchema(z.object({
     email: z.string().email('Введите корректный Email'),
     password: z.string().min(6, 'Пароль должен быть не менее 6 символов'),
-});
+}));
 
-// 2. Состояние формы
-const form = reactive({
-    email: 'admin@zefirello.ru', // Для удобства тестов
-    password: 'password',
-});
-
-const errors = ref<Record<string, string>>({}); // Ошибки фронта (Zod)
-const isSubmitting = ref(false);
-
-// 3. Отправка формы
-const handleSubmit = async () => {
-    // Сброс ошибок
-    errors.value = {};
-    auth.errors = {}; // Сброс ошибок бекенда
-
-    // Валидация Zod
-    const result = loginSchema.safeParse(form);
-    if (!result.success) {
-        // Превращаем массив ошибок Zod в удобный объект
-        result.error.issues.forEach((issue) => {
-            errors.value[issue.path[0]] = issue.message;
-        });
-        return;
+// 2. Инициализация формы
+const { handleSubmit, errors, defineField, isSubmitting } = useForm({
+    validationSchema: loginSchema,
+    initialValues: {
+        email: 'admin@zefirello.ru',
+        password: 'password'
     }
+});
 
-    isSubmitting.value = true;
+// Связываем поля (v-model)
+const [email, emailAttrs] = defineField('email');
+const [password, passwordAttrs] = defineField('password');
+
+// 3. Отправка
+const onSubmit = handleSubmit(async (values) => {
+    auth.errors = {};
     try {
-        await auth.login(form);
-        router.push({ name: 'home' }); // Редирект после успеха
+        await auth.login(values);
+        router.push({ name: 'home' });
     } catch (e) {
-        // Ошибки бекенда (422) уже в auth.errors
-    } finally {
-        isSubmitting.value = false;
+        // Ошибки API (422) обработаются в шаблоне через auth.errors
     }
-};
+});
 </script>
 
 <template>
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-            <h1 class="text-2xl font-bold mb-6 text-center">Вход в систему</h1>
+    <div class="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
+        <div class="w-full max-w-sm md:max-w-4xl">
+            <Card class="overflow-hidden p-0">
+                <CardContent class="grid p-0 md:grid-cols-2">
 
-            <form @submit.prevent="handleSubmit" class="space-y-4">
-                <!-- Email -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Email</label>
-                    <input
-                        v-model="form.email"
-                        type="email"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
-                        :class="{'border-red-500': errors.email || auth.errors.email}"
-                    >
-                    <p v-if="errors.email" class="text-red-500 text-xs mt-1">{{ errors.email }}</p>
-                    <p v-if="auth.errors.email" class="text-red-500 text-xs mt-1">{{ auth.errors.email[0] }}</p>
-                </div>
+                    <form @submit="onSubmit" class="p-6 md:p-8">
+                        <FieldGroup class="flex flex-col gap-6">
 
-                <!-- Password -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Пароль</label>
-                    <input
-                        v-model="form.password"
-                        type="password"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
-                        :class="{'border-red-500': errors.password}"
-                    >
-                    <p v-if="errors.password" class="text-red-500 text-xs mt-1">{{ errors.password }}</p>
-                </div>
+                            <div class="flex flex-col items-center gap-2 text-center">
+                                <h1 class="text-2xl font-bold">Вход в систему</h1>
+                                <p class="text-muted-foreground text-balance text-sm">
+                                    Введите данные для входа в аккаунт
+                                </p>
+                            </div>
 
-                <!-- Submit -->
-                <button
-                    type="submit"
-                    :disabled="isSubmitting"
-                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-                >
-                    {{ isSubmitting ? 'Вход...' : 'Войти' }}
-                </button>
-            </form>
+                            <!-- data-invalid красит рамку в красный, если есть ошибка -->
+                            <Field :data-invalid="!!errors.email || !!auth.errors.email">
+                                <FieldLabel for="email">Email</FieldLabel>
+                                <Input
+                                    id="email"
+                                    v-model="email"
+                                    v-bind="emailAttrs"
+                                    type="email"
+                                    placeholder="m@example.com"
+                                    :aria-invalid="!!errors.email"
+                                />
+                                <!-- Ошибка валидации (Zod) -->
+                                <FieldError v-if="errors.email">{{ errors.email }}</FieldError>
+                                <!-- Ошибка с бэкенда (Laravel) -->
+                                <FieldError v-if="auth.errors.email">{{ auth.errors.email[0] }}</FieldError>
+                            </Field>
+
+                            <Field :data-invalid="!!errors.password">
+                                <FieldLabel for="password">Пароль</FieldLabel>
+                                <Input
+                                    id="password"
+                                    v-model="password"
+                                    v-bind="passwordAttrs"
+                                    type="password"
+                                />
+                                <FieldError v-if="errors.password">{{ errors.password }}</FieldError>
+                            </Field>
+
+                            <Field>
+                                <Button type="submit" class="w-full" :disabled="isSubmitting">
+                                    {{ isSubmitting ? 'Вход...' : 'Войти' }}
+                                </Button>
+                            </Field>
+
+                        </FieldGroup>
+                    </form>
+
+                    <div class="relative hidden bg-primary md:flex flex-col items-center justify-center p-6 text-center">
+
+                        <!-- Блок: Лого + Название -->
+                        <div class="flex items-center gap-3 mb-4">
+                            <!-- Логотип -->
+                            <img
+                                :src="logoCompany"
+                                alt="Zefirello Logo"
+                                class="h-12 w-12 object-contain"
+                            />
+
+                            <!-- Название -->
+                            <!-- БЫЛО: text-foreground (черный) -->
+                            <!-- СТАЛО: text-primary-foreground (белый) -->
+                            <h2 class="text-4xl font-medium tracking-tight text-primary-foreground">
+                                Zefirello
+                            </h2>
+                        </div>
+
+                        <!-- Подзаголовок -->
+                        <!-- БЫЛО: text-muted-foreground (серый, плохо видно) -->
+                        <!-- СТАЛО: text-primary-foreground/80 (белый с прозрачностью 80%) -->
+                        <p class="text-primary-foreground/80 text-lg font-medium">
+                            Система управления задачами
+                        </p>
+
+                        <!-- Footer -->
+                        <p class="text-sm text-primary-foreground/60 mt-2">
+                            Enterprise Edition
+                        </p>
+
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     </div>
 </template>
