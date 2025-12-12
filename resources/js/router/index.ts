@@ -1,27 +1,48 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import Login from '@/Pages/Auth/Login.vue'; // Логин
-import NotFound from '../Pages/NotFound.vue'; // 404
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
-const routes = [
+// Импортируем Layout тоже лениво, или статично (не критично, но лениво лучше для разделения бандла)
+const AppLayout = () => import('@/layouts/AppLayout.vue');
+
+const routes: RouteRecordRaw[] = [
+    // 1. АВТОРИЗОВАННАЯ ЗОНА (Дашборд, Задачи)
+    // Мы оборачиваем их в AppLayout, чтобы был Сайдбар
+    {
+        path: '/',
+        component: AppLayout, // Сначала грузится оболочка
+        meta: { requiresAuth: true },
+        children: [
+            {
+                path: '', // Это путь "/"
+                name: 'home',
+                // ЛЕНИВАЯ ЗАГРУЗКА: Файл HomeView.js скачается только когда юзер войдет
+                component: () => import('@/views/HomeView.vue'),
+            },
+            // Пример будущей страницы
+            /*
+            {
+                path: 'tasks',
+                name: 'tasks',
+                component: () => import('@/views/tasks/TasksView.vue'),
+            }
+            */
+        ]
+    },
+
+    // 2. ПУБЛИЧНАЯ ЗОНА (Логин)
     {
         path: '/login',
         name: 'login',
-        component: Login,
-        meta: { guest: true } // Пометка: только для гостей
+        // ЛЕНИВАЯ ЗАГРУЗКА
+        component: () => import('@/views/auth/LoginView.vue'),
+        meta: { guest: true }
     },
+
+    // 3. ОШИБКИ
     {
-        path: '/',
-        name: 'home',
-        component: () => import('@/Pages/Home.vue'), // Ленивая загрузка
-        meta: { requiresAuth: true } // Пометка: только для авторизованных
-    },
-    //  404 (ВСЕГДА ПОСЛЕДНЯЯ)
-    {
-        path: '/:pathMatch(.*)*', // Регулярка "всё остальное"
+        path: '/:pathMatch(.*)*',
         name: 'not-found',
-        component: NotFound,
-        meta: { requiresAuth: true }
+        component: () => import('@/views/NotFoundView.vue'),
     }
 ];
 
@@ -30,23 +51,29 @@ const router = createRouter({
     routes
 });
 
-// Глобальная защита роутов (Guard)
+// --- GUARD (ЗАЩИТА) ---
 router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore();
 
-    // Если мы еще не знаем, залогинен ли юзер — спросим у API
-    // (Это нужно при обновлении страницы F5)
-    if (authStore.user === null) {
-        await authStore.getUser();
+    // Проверка сессии при перезагрузке страницы (F5)
+    // Делаем это только если юзера нет в сторе, но есть куки/токен (условно)
+    if (!authStore.user) {
+        try {
+            await authStore.getUser();
+        } catch (error) {
+            // Если сессия протухла — ничего страшного, просто user останется null
+        }
     }
 
-    // Логика перенаправления
-    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-        next({ name: 'login' }); // Иди логинься
-    } else if (to.meta.guest && authStore.isAuthenticated) {
-        next({ name: 'home' }); // Ты уже вошел, вали домой
+    const isAuthenticated = !!authStore.user;
+
+    // Логика редиректов
+    if (to.meta.requiresAuth && !isAuthenticated) {
+        next({ name: 'login' });
+    } else if (to.meta.guest && isAuthenticated) {
+        next({ name: 'home' });
     } else {
-        next(); // Проходи
+        next();
     }
 });
 

@@ -22,7 +22,7 @@ class RolesAndAdminSeeder extends Seeder
             ['email' => 'admin@zefirello.ru'], // Поиск по Email
             [
                 'name' => 'Super Admin',
-                'password' => bcrypt('password')
+                'password' => bcrypt('nvG#7#^?zA}')
             ]
         );
         // Назначаем роль (syncRoles безопаснее, чем assignRole при повторном запуске)
@@ -33,7 +33,7 @@ class RolesAndAdminSeeder extends Seeder
             ['email' => 'user@zefirello.ru'],
             [
                 'name' => 'Test User',
-                'password' => bcrypt('password'),
+                'password' => bcrypt('7#^?zA}vGD&'),
             ]
         );
         $user->syncRoles($roleUser);
