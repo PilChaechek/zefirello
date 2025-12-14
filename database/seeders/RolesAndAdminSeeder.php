@@ -4,38 +4,35 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 class RolesAndAdminSeeder extends Seeder
 {
     public function run(): void
     {
-        // Сброс кеша ролей
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // 1. Создаем роли (firstOrCreate - если есть, не создаст дубль)
         $roleAdmin = Role::firstOrCreate(['name' => 'admin']);
-        $roleUser = Role::firstOrCreate(['name' => 'user']);
 
-        // 2. Создаем Супер Админа
+        // 1. Получаем данные из конфига
+        $adminEmail = config('services.admin.email');
+        $adminPassword = config('services.admin.password');
+
+        // 2. ЗАЩИТА: Если пароль не задан, останавливаем сидинг с ошибкой
+        if (empty($adminPassword)) {
+            throw new \Exception('⚠️ ОШИБКА: Не задан ADMIN_PASSWORD в .env файле!');
+        }
+
+        // 3. Создаем Супер Админа
         $admin = User::firstOrCreate(
-            ['email' => 'admin@zefirello.ru'], // Поиск по Email
+            ['email' => $adminEmail],
             [
                 'name' => 'Super Admin',
-                'password' => bcrypt('nvG#7#^?zA}')
+                'password' => Hash::make($adminPassword)
             ]
         );
-        // Назначаем роль (syncRoles безопаснее, чем assignRole при повторном запуске)
         $admin->syncRoles($roleAdmin);
 
-        // 3. Создаем Тестового юзера
-        $user = User::firstOrCreate(
-            ['email' => 'user@zefirello.ru'],
-            [
-                'name' => 'Test User',
-                'password' => bcrypt('7#^?zA}vGD&'),
-            ]
-        );
-        $user->syncRoles($roleUser);
     }
 }

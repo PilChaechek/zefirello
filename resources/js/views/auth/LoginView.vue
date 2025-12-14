@@ -31,8 +31,8 @@ const loginSchema = toTypedSchema(z.object({
 const { handleSubmit, errors, defineField, isSubmitting } = useForm({
     validationSchema: loginSchema,
     initialValues: {
-        email: 'admin@zefirello.ru',
-        password: 'password'
+        email: '',
+        password: ''
     }
 });
 
@@ -76,7 +76,7 @@ const onSubmit = handleSubmit(async (values) => {
                                     v-model="email"
                                     v-bind="emailAttrs"
                                     type="email"
-                                    placeholder="m@example.com"
+                                    placeholder="email@example.com"
                                     :aria-invalid="!!errors.email"
                                 />
                                 <!-- Ошибка валидации (Zod) -->
