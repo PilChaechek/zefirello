@@ -9,7 +9,7 @@ import {
     SidebarMenuItem,
     SidebarMenuButton,
     SidebarRail,
-    useSidebar, // <--- Добавили хук
+    useSidebar,
 } from "@/components/ui/sidebar";
 
 // Импортируем компоненты Dropdown
@@ -28,12 +28,12 @@ import logoCompany from '@/assets/images/zefirello.svg';
 
 // Иконки
 import {
-    Home, Settings, ListTodo, LogOut, User, ChevronsUpDown
+    Home, Users, LogOut, User, ChevronsUpDown
 } from 'lucide-vue-next';
 
 const auth = useAuthStore();
 const router = useRouter();
-const { isMobile } = useSidebar(); // <--- Получаем состояние мобилки
+const { isMobile } = useSidebar();
 
 const handleLogout = async () => {
     await auth.logout();
@@ -41,15 +41,13 @@ const handleLogout = async () => {
 };
 
 const menuItems = [
-    { title: "Главная", url: "/", icon: Home },
-    // { title: "Задачи", url: "/tasks", icon: ListTodo },
-    // { title: "Настройки", url: "/settings", icon: Settings },
+    { title: "Главная", url: "/", icon: Home , exact: true},
+    { title: "Пользователи", url: "/users", icon: Users },
 ];
 </script>
 
 <template>
-    <!-- !border-r-0 убирает полоску справа, как мы решили ранее -->
-    <Sidebar class="!border-r-0">
+    <Sidebar>
         <SidebarHeader>
             <SidebarMenu>
                 <SidebarMenuItem>
@@ -66,7 +64,11 @@ const menuItems = [
                 <SidebarMenu>
                     <SidebarMenuItem v-for="item in menuItems" :key="item.title">
                         <SidebarMenuButton as-child tooltip="item.title">
-                            <RouterLink :to="item.url" active-class="bg-accent text-accent-foreground">
+                            <RouterLink
+                                :to="item.url"
+                                :active-class="item.exact ? '' : 'bg-accent text-accent-foreground'"
+                                :exact-active-class="item.exact ? 'bg-accent text-accent-foreground' : ''"
+                            >
                                 <component :is="item.icon" />
                                 <span>{{ item.title }}</span>
                             </RouterLink>
@@ -106,9 +108,6 @@ const menuItems = [
                             align="end"
                             :side-offset="4"
                         >
-
-
-
                             <!-- Пункт Выход -->
                             <DropdownMenuItem @click="handleLogout">
                                 <LogOut class="mr-2 h-4 w-4" />

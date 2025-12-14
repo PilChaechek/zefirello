@@ -26,21 +26,26 @@ const routes: RouteRecordRaw[] = [
                 component: () => import('@/views/HomeView.vue'),
                 meta: { title: 'Главная' }
             },
-            // {
-            //     path: 'tasks',
-            //     name: 'tasks',
-            //     component: () => import('@/views/TasksView.vue'), // Условно
-            //     // NEW: Добавили заголовок
-            //     meta: { title: 'Мои задачи' }
-            // }
+            // Users
+            {
+                path: 'users',
+                name: 'users',
+                component: () => import('@/views/users/UserIndexView.vue'),
+                meta: {
+                    title: 'Пользователи',
+                    requiredRole: 'admin'
+                }
+            }
         ]
     },
     {
         path: '/login',
         name: 'login',
         component: () => import('@/views/auth/LoginView.vue'),
-        // NEW: Добавили заголовок
-        meta: { guest: true, title: 'Вход в систему' }
+        meta: {
+            guest: true,
+            title: 'Вход в систему'
+        }
     },
     {
         path: '/:pathMatch(.*)*',
