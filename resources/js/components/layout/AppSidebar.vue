@@ -42,8 +42,8 @@ const handleLogout = async () => {
 
 const menuItems = [
     { title: "Главная", url: "/", icon: Home },
-    { title: "Задачи", url: "/tasks", icon: ListTodo },
-    { title: "Настройки", url: "/settings", icon: Settings },
+    // { title: "Задачи", url: "/tasks", icon: ListTodo },
+    // { title: "Настройки", url: "/settings", icon: Settings },
 ];
 </script>
 
