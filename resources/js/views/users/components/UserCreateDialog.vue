@@ -71,7 +71,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 <template>
     <Dialog v-model:open="isOpen">
-        <DialogTrigger as-child>
+        <DialogTrigger as-child class="mt-4">
             <Button>Добавить пользователя</Button>
         </DialogTrigger>
 
