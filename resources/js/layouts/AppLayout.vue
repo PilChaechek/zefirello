@@ -6,6 +6,8 @@ import { Separator } from "@/components/ui/separator";
 import ModeToggle from "@/components/layout/ModeToggle.vue";
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
+import 'vue-sonner/style.css'
+import { Toaster } from '@/components/ui/sonner';
 
 const route = useRoute();
 const pageTitle = computed(() => route.meta.title || 'Title');
@@ -33,4 +35,5 @@ const pageTitle = computed(() => route.meta.title || 'Title');
             </div>
         </SidebarInset>
     </SidebarProvider>
+    <Toaster rich-colors />
 </template>

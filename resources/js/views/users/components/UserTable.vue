@@ -1,24 +1,48 @@
 <!-- resources/js/views/users/components/UserTable.vue -->
 <script setup lang="ts">
+import { ref } from 'vue';
 import axios from 'axios';
 import type { User } from '@/types/user';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { toast } from 'vue-sonner';
 
-const props = defineProps<{
+defineProps<{
   users: User[];
 }>();
 
 const emit = defineEmits(['user-deleted']);
 
-const deleteUser = async (id: number) => {
-  if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
-    try {
-      await axios.delete(`users/${id}`);
-      emit('user-deleted');
-    } catch (e) {
-      console.error('Ошибка при удалении пользователя:', e);
-      alert('Не удалось удалить пользователя.');
-    }
+const isAlertDialogOpen = ref(false);
+const selectedUser = ref<User | null>(null);
+
+const openDeleteDialog = (user: User) => {
+  selectedUser.value = user;
+  isAlertDialogOpen.value = true;
+};
+
+const deleteUser = async () => {
+  if (!selectedUser.value) return;
+
+  try {
+    await axios.delete(`users/${selectedUser.value.id}`);
+    emit('user-deleted');
+    toast.success(`Пользователь ${selectedUser.value.name} успешно удален.`);
+  } catch (e) {
+    console.error('Ошибка при удалении пользователя:', e);
+    toast.error('Не удалось удалить пользователя.');
+  } finally {
+    isAlertDialogOpen.value = false;
   }
 };
 </script>
@@ -33,7 +57,7 @@ const deleteUser = async (id: number) => {
         <th class="px-4 py-3">Email</th>
         <th class="px-4 py-3">Роль</th>
         <th class="px-4 py-3">Дата регистрации</th>
-        <th class="px-4 py-3">Действия</th> <!-- Новая колонка -->
+        <th class="px-4 py-3">Действия</th>
       </tr>
       </thead>
       <tbody>
@@ -42,25 +66,24 @@ const deleteUser = async (id: number) => {
         <td class="px-4 py-3 font-medium">{{ user.name }}</td>
         <td class="px-4 py-3">{{ user.email }}</td>
 
-        <!-- Вывод ролей -->
         <td class="px-4 py-3">
           <div class="flex flex-wrap gap-1">
-                            <span
-                                v-for="role in user.roles"
-                                :key="role.name"
-                                class="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full"
-                            >
-                                {{ role.label }}
-                            </span>
+            <span
+                v-for="role in user.roles"
+                :key="role.name"
+                class="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full"
+            >
+              {{ role.label }}
+            </span>
             <span v-if="user.roles.length === 0" class="text-gray-400 text-xs">
-                                Нет ролей
-                            </span>
+              Нет ролей
+            </span>
           </div>
         </td>
 
         <td class="px-4 py-3">{{ new Date(user.created_at).toLocaleDateString() }}</td>
         <td class="px-4 py-3">
-          <Button variant="destructive" size="sm" @click="deleteUser(user.id)">
+          <Button variant="destructive" size="sm" @click="openDeleteDialog(user)">
             Удалить
           </Button>
         </td>
@@ -68,4 +91,22 @@ const deleteUser = async (id: number) => {
       </tbody>
     </table>
   </div>
+
+  <AlertDialog :open="isAlertDialogOpen" @update:open="isAlertDialogOpen = $event">
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Вы уверены?</AlertDialogTitle>
+        <AlertDialogDescription>
+          Это действие нельзя отменить. Пользователь "{{ selectedUser?.name }}" будет навсегда удален из системы.
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel>Отмена</AlertDialogCancel>
+        <AlertDialogAction @click="deleteUser">
+          Удалить
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
 </template>
+

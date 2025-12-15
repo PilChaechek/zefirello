@@ -4,6 +4,7 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import * as z from 'zod';
 import axios from 'axios';
+import { toast } from 'vue-sonner';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -60,11 +61,12 @@ const onSubmit = handleSubmit(async (values) => {
         isOpen.value = false; // Закрываем модалку
         resetForm();          // Чистим форму
         emit('user-created'); // Сообщаем родителю, что надо обновить список
+        toast.success(`Пользователь ${values.name} успешно создан.`);
 
     } catch (error: any) {
         console.error(error);
         // Тут можно добавить обработку ошибок от бэкенда (например, "Email занят")
-        alert('Ошибка при создании. Проверь консоль.');
+        toast.error('Ошибка при создании пользователя.');
     }
 });
 </script>
