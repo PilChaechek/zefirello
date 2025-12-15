@@ -1,37 +1,49 @@
-<!-- resources/js/Views/Users/UserIndex.vue -->
+<!-- resources/js/views/users/UserIndexView.vue -->
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, provide } from 'vue';
 import axios from 'axios';
 import type { User } from '@/types/user';
-import UserCreateDialog from '@/views/users/components/UserCreateDialog.vue';
-import UserTable from '@/views/users/components/UserTable.vue';
+import UserCreateDialog from './components/UserCreateDialog.vue';
+import DataTable from '@/components/ui/data-table/DataTable.vue';
+import { columns } from './components/columns'; // Конфигурация колонок
 
-// Указываем тип для ref
 const users = ref<User[]>([]);
-const loading = ref(true);
+const isLoading = ref(true);
 
 const fetchUsers = async () => {
-    // Не ставим loading = true, чтобы таблица не мигала при обновлении списка
-    // или ставим, если хотим показать спиннер. Для UX лучше оставить старые данные пока грузятся новые.
+    // isLoading.value = true; // Можно раскомментировать, если нужен спиннер при каждом обновлении
     try {
-        const response = await axios.get('users');
-        users.value = response.data.data;
+        const { data } = await axios.get('/users');
+        users.value = data.data;
     } catch (e) {
-        console.error('Ошибка:', e);
+        console.error('Ошибка загрузки:', e);
     } finally {
-        loading.value = false;
+        isLoading.value = false;
     }
 };
 
-onMounted(() => {
-    fetchUsers();
-});
+// МАГИЯ VUE 3:
+// Мы "раздаем" эту функцию всем дочерним компонентам,
+// даже тем, что внутри DataTable -> Cell -> UserActions
+provide('refreshUsers', fetchUsers);
+
+onMounted(fetchUsers);
 </script>
 
 <template>
-    <div class="p-6">
-        <div v-if="loading" class="text-gray-500">Загрузка...</div>
-        <UserTable v-else :users="users" @user-deleted="fetchUsers" />
-        <UserCreateDialog @user-created="fetchUsers" />
+    <div class="space-y-6">
+        <div class="flex items-center justify-between">
+            <UserCreateDialog @user-created="fetchUsers" />
+        </div>
+
+        <div v-if="isLoading" class="flex justify-center py-10">
+            <span class="text-muted-foreground">Загрузка данных...</span>
+        </div>
+
+        <DataTable
+            v-else
+            :columns="columns"
+            :data="users"
+        />
     </div>
 </template>

@@ -66,22 +66,20 @@ const deleteUser = async () => {
         <td class="px-4 py-3 font-medium">{{ user.name }}</td>
         <td class="px-4 py-3">{{ user.email }}</td>
 
-        <td class="px-4 py-3">
-          <div class="flex flex-wrap gap-1">
-            <span
-                v-for="role in user.roles"
-                :key="role.name"
-                class="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full"
-            >
-              {{ role.label }}
-            </span>
-            <span v-if="user.roles.length === 0" class="text-gray-400 text-xs">
-              Нет ролей
-            </span>
-          </div>
-        </td>
-
-        <td class="px-4 py-3">{{ new Date(user.created_at).toLocaleDateString() }}</td>
+                                        <td class="px-4 py-3">
+                                  <div class="flex flex-wrap gap-1">
+                                    <span
+                                        v-for="role in user.roles"
+                                        :key="role.name"
+                                        class="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full"
+                                    >
+                                      {{ role.label }}
+                                    </span>
+                                    <span v-if="user.roles.length === 0" class="text-gray-400 text-xs">
+                                      Нет ролей
+                                    </span>
+                                  </div>
+                                </td>        <td class="px-4 py-3">{{ new Date(user.created_at).toLocaleDateString() }}</td>
         <td class="px-4 py-3">
           <Button variant="destructive" size="sm" @click="openDeleteDialog(user)">
             Удалить
