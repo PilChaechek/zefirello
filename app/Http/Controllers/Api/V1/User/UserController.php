@@ -14,7 +14,7 @@ class UserController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        $users = User::latest()->paginate(10);
+        $users = User::with('roles')->latest()->paginate(10);
         return UserResource::collection($users);
     }
 
