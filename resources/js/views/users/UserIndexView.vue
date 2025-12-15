@@ -3,12 +3,15 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import type { User } from '@/types/user';
+import UserCreateDialog from '@/views/users/components/UserCreateDialog.vue';
 
 // Указываем тип для ref
 const users = ref<User[]>([]);
 const loading = ref(true);
 
-onMounted(async () => {
+const fetchUsers = async () => {
+    // Не ставим loading = true, чтобы таблица не мигала при обновлении списка
+    // или ставим, если хотим показать спиннер. Для UX лучше оставить старые данные пока грузятся новые.
     try {
         const response = await axios.get('users');
         users.value = response.data.data;
@@ -17,6 +20,10 @@ onMounted(async () => {
     } finally {
         loading.value = false;
     }
+};
+
+onMounted(() => {
+    fetchUsers();
 });
 </script>
 
@@ -62,5 +69,6 @@ onMounted(async () => {
                 </tbody>
             </table>
         </div>
+        <UserCreateDialog @user-created="fetchUsers" />
     </div>
 </template>

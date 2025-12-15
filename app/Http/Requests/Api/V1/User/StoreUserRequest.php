@@ -23,9 +23,9 @@ class StoreUserRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => [
                 'required',
-                'confirmed', // Ожидает поле password_confirmation
                 Password::defaults() // Стандартные правила безопасности Laravel (мин 8 символов и т.д.)
             ],
+            'role' => ['required', 'string', 'exists:roles,name'],
         ];
     }
 }

@@ -29,6 +29,11 @@ class UserController extends Controller
         // Создаем (пока без Action класса, для простоты MVP)
         $user = User::create($data);
 
+        // 2. Присваиваем роль
+        if ($request->has('role')) {
+            $user->assignRole($request->role);
+        }
+
         return new UserResource($user);
     }
 }
