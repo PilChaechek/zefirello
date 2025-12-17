@@ -35,6 +35,24 @@ const routes: RouteRecordRaw[] = [
                     title: 'Пользователи',
                     requiredRole: 'admin'
                 }
+            },
+            // Projects
+            {
+                path: 'projects',
+                name: 'projects',
+                component: () => import('@/views/projects/ProjectIndexView.vue'),
+                meta: {
+                    title: 'Проекты',
+                    requiredRole: 'admin' // Оставляем для контроля видимости в UI
+                },
+                children: [
+                    {
+                        path: ':slug',
+                        name: 'project-detail',
+                        component: () => import('@/views/projects/ProjectDetailView.vue'),
+                        meta: { title: 'Детали проекта' }
+                    }
+                ]
             }
         ]
     },

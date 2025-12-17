@@ -28,7 +28,7 @@ import logoCompany from '@/assets/images/zefirello.svg';
 
 // Иконки
 import {
-    Home, Users, LogOut, User, ChevronsUpDown
+    Home, Users, LogOut, User, ChevronsUpDown, Folder
 } from 'lucide-vue-next';
 
 const auth = useAuthStore();
@@ -42,6 +42,7 @@ const handleLogout = async () => {
 
 const menuItems = [
     { title: "Главная", url: "/", icon: Home , exact: true},
+    { title: "Проекты", url: "/projects", icon: Folder },
     { title: "Пользователи", url: "/users", icon: Users },
 ];
 </script>
