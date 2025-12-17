@@ -73,6 +73,7 @@ export const columns: ColumnDef<User>[] = [
             // Рендерим Vue-компонент внутри ячейки
             return h(UserActions, {
                 user: user,
+                onEdit: (userToEdit) => { },
             })
         },
     },

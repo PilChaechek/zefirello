@@ -1,6 +1,6 @@
 <!-- resources/js/views/users/components/UserActions.vue -->
 <script setup lang="ts">
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
 import { MoreHorizontal, Pencil, Trash } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,9 +27,9 @@ import { toast } from 'vue-sonner';
 
 const props = defineProps<{
     user: User;
+    onEdit: (user: User) => void;
+    onUserDeleted: () => void;
 }>();
-
-const refreshUsers = inject<() => void>('refreshUsers');
 
 const isDeleteDialogOpen = ref(false);
 const isDeleting = ref(false);
@@ -40,8 +40,8 @@ const handleDelete = async () => {
         await axios.delete(`/users/${props.user.id}`);
         toast.success('Пользователь удален');
 
-        if (refreshUsers) {
-            refreshUsers();
+        if (props.onUserDeleted) {
+            props.onUserDeleted();
         }
     } catch (e) {
         console.error(e);
@@ -63,7 +63,7 @@ const handleDelete = async () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
             <DropdownMenuLabel>Действия</DropdownMenuLabel>
-            <DropdownMenuItem @click="$emit('edit', user)">
+            <DropdownMenuItem @click="props.onEdit(user)"> <!-- Call onEdit prop function -->
                 <Pencil class="mr-2 h-4 w-4" />
                 Редактировать
             </DropdownMenuItem>
