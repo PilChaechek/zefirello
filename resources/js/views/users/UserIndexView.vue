@@ -3,7 +3,6 @@
 import { ref, onMounted, h } from 'vue';
 import axios from 'axios';
 import type { User } from '@/types/user';
-// import UserCreateDialog from './components/UserCreateDialog.vue'; // Удаляем старый компонент
 import UserFormDialog from './components/UserFormDialog.vue'; // Импортируем новый универсальный компонент
 import DataTable from '@/components/ui/data-table/DataTable.vue';
 import { columns as originalColumns } from './components/columns'; // Конфигурация колонок
