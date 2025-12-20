@@ -6,14 +6,18 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
+use Illuminate\Auth\Access\HandlesAuthorization;
+
 class ProjectPolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true; // Any authenticated user can request their project list
     }
 
     /**
@@ -21,7 +25,8 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return false;
+        // User can view the project if they are a member of it
+        return $project->users->contains($user);
     }
 
     /**
@@ -29,7 +34,15 @@ class ProjectPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole('admin');
+    }
+
+    /**
+     * Determine whether the user can add/remove users from the project.
+     */
+    public function manageUsers(User $user, Project $project): bool
+    {
+        return $user->hasRole('admin');
     }
 
     /**
@@ -37,7 +50,7 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return false;
+        return $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +58,7 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        return false;
+        return $user->hasRole('admin');
     }
 
     /**

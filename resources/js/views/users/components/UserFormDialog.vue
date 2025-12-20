@@ -94,7 +94,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 <template>
     <Dialog :open="open" @update:open="$emit('update:open', $event)">
-        <DialogContent class="sm:max-w-[425px]">
+        <DialogContent class="sm:max-w-[425px]" :onOpenAutoFocus="(e) => e.preventDefault()">
             <DialogHeader>
                 <DialogTitle>{{ isEditMode ? 'Редактировать пользователя' : 'Новый пользователь' }}</DialogTitle>
                 <DialogDescription>
