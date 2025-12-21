@@ -73,6 +73,8 @@ onMounted(fetchUsers);
             v-else
             :columns="columns"
             :data="users"
+            search-placeholder="Найти пользователя..."
+            search-column="name"
         />
 
         <!-- Универсальный диалог для создания/редактирования -->

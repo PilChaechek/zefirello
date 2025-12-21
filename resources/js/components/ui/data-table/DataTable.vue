@@ -6,6 +6,8 @@ import {
     useVueTable,
     getPaginationRowModel,
     getSortedRowModel,
+    getFilteredRowModel,
+    type ColumnFiltersState,
     type SortingState,
     type ColumnDef,
 } from '@tanstack/vue-table'
@@ -18,14 +20,18 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { ref } from 'vue'
 
 const props = defineProps<{
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    searchPlaceholder?: string
+    searchColumn?: string
 }>()
 
 const sorting = ref<SortingState>([])
+const columnFilters = ref<ColumnFiltersState>([])
 
 const table = useVueTable({
     get data() { return props.data },
@@ -33,18 +39,34 @@ const table = useVueTable({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: updaterOrValue => {
         sorting.value = typeof updaterOrValue === 'function'
             ? updaterOrValue(sorting.value)
             : updaterOrValue
     },
+    onColumnFiltersChange: updaterOrValue => {
+        columnFilters.value = typeof updaterOrValue === 'function'
+            ? updaterOrValue(columnFilters.value)
+            : updaterOrValue
+    },
     state: {
         get sorting() { return sorting.value },
+        get columnFilters() { return columnFilters.value },
     },
 })
 </script>
 
 <template>
+    <div class="flex items-center py-4" v-if="props.searchColumn">
+        <Input
+            class="max-w-sm dark:text-white"
+            :placeholder="props.searchPlaceholder || 'Поиск...'"
+            :model-value="table.getColumn(props.searchColumn)?.getFilterValue() as string"
+            @update:model-value="table.getColumn(props.searchColumn)?.setFilterValue($event)"
+        />
+    </div>
+
     <div class="border rounded-md">
         <Table>
             <TableHeader>

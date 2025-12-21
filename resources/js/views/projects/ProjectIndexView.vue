@@ -71,6 +71,8 @@ onMounted(fetchProjects);
             v-else
             :columns="columns"
             :data="projects"
+            search-placeholder="Найти проект..."
+            search-column="name"
         />
 
         <ProjectFormDialog

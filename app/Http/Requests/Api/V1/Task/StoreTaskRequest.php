@@ -27,7 +27,7 @@ class StoreTaskRequest extends FormRequest
             'status' => ['required', 'string', 'in:todo,in_progress,done,canceled'],
             'priority' => ['required', 'string', 'in:low,medium,high'],
             'order' => ['required', 'integer', 'min:0'],
-            'time_spent' => ['required', 'integer', 'min:0'],
+            'time_spent' => ['nullable', 'integer', 'min:0'],
             'assignee_id' => ['nullable', 'exists:users,id'],
             'due_date' => ['nullable', 'date'],
         ];

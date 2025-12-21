@@ -27,7 +27,7 @@ class UpdateTaskRequest extends FormRequest
             'status' => ['sometimes', 'string', 'in:todo,in_progress,done,canceled'],
             'priority' => ['sometimes', 'string', 'in:low,medium,high'],
             'order' => ['sometimes', 'integer', 'min:0'],
-            'time_spent' => ['sometimes', 'integer', 'min:0'],
+            'time_spent' => ['sometimes', 'nullable', 'integer', 'min:0'],
             'assignee_id' => ['nullable', 'exists:users,id'],
             'due_date' => ['nullable', 'date'],
         ];
