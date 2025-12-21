@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\Tasks\TaskPriority;
+use App\Enums\Tasks\TaskStatus;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,8 +22,8 @@ class TaskFactory extends Factory
     {
         $faker = \Faker\Factory::create('ru_RU');
 
-        $statuses = ['todo', 'in_progress', 'done', 'canceled'];
-        $priorities = ['low', 'medium', 'high'];
+        $statuses = array_map(fn($enum) => $enum->value, TaskStatus::cases());
+        $priorities = array_map(fn($enum) => $enum->value, TaskPriority::cases());
 
         $project = Project::inRandomOrder()->first();
         $creator = User::inRandomOrder()->first();

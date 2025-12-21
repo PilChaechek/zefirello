@@ -5,8 +5,8 @@ export interface Task {
     id: number;
     title: string;
     description: string | null;
-    status: 'todo' | 'in_progress' | 'done' | 'canceled';
-    priority: 'low' | 'medium' | 'high';
+    status: string;
+    priority: string;
     order: number;
     time_spent: number; // В минутах
     due_date: string | null;

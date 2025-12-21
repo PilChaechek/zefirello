@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Api\V1\Task;
 
+use App\Enums\Tasks\TaskPriority;
+use App\Enums\Tasks\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreTaskRequest extends FormRequest
 {
@@ -24,8 +27,8 @@ class StoreTaskRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'status' => ['required', 'string', 'in:todo,in_progress,done,canceled'],
-            'priority' => ['required', 'string', 'in:low,medium,high'],
+            'status' => ['required', new Enum(TaskStatus::class)],
+            'priority' => ['required', new Enum(TaskPriority::class)],
             'order' => ['required', 'integer', 'min:0'],
             'time_spent' => ['nullable', 'integer', 'min:0'],
             'assignee_id' => ['nullable', 'exists:users,id'],

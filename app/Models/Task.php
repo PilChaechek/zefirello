@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Tasks\TaskPriority;
+use App\Enums\Tasks\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,6 +31,8 @@ class Task extends Model
      */
     protected $casts = [
         'due_date' => 'date',
+        'status' => TaskStatus::class,
+        'priority' => TaskPriority::class,
     ];
 
     public function project()

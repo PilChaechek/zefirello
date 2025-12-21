@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Api\V1\Task;
 
+use App\Enums\Tasks\TaskPriority;
+use App\Enums\Tasks\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateTaskRequest extends FormRequest
 {
@@ -24,8 +27,8 @@ class UpdateTaskRequest extends FormRequest
         return [
             'title' => ['sometimes', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'status' => ['sometimes', 'string', 'in:todo,in_progress,done,canceled'],
-            'priority' => ['sometimes', 'string', 'in:low,medium,high'],
+            'status' => ['sometimes', new Enum(TaskStatus::class)],
+            'priority' => ['sometimes', new Enum(TaskPriority::class)],
             'order' => ['sometimes', 'integer', 'min:0'],
             'time_spent' => ['sometimes', 'nullable', 'integer', 'min:0'],
             'assignee_id' => ['nullable', 'exists:users,id'],

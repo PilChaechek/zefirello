@@ -31,6 +31,7 @@ Route::prefix('v1')->group(function () {
         Route::delete('projects/{project:slug}/users/{user}', [ProjectController::class, 'removeUser']);
 
         // Task Domain (Вложенный в проекты)
+        Route::get('/tasks/meta', [\App\Http\Controllers\Api\V1\Task\TaskMetaController::class, 'index']);
         Route::apiResource('projects.tasks', TaskController::class);
     });
 

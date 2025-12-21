@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\Tasks\TaskPriority;
+use App\Enums\Tasks\TaskStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('status')->default('todo');
-            $table->string('priority')->default('medium');
+            $table->string('status')->default(TaskStatus::TODO->value);
+            $table->string('priority')->default(TaskPriority::MEDIUM->value);
             $table->integer('order')->default(0);
             $table->integer('time_spent')->default(0);
             $table->foreignId('project_id')->constrained()->onDelete('cascade');

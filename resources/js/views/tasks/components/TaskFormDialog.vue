@@ -6,6 +6,7 @@ import * as z from 'zod';
 import axios from 'axios';
 import { toast } from 'vue-sonner';
 import type { Task } from '@/types/task';
+import { useTaskMetaStore } from '@/stores/taskMeta';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -33,11 +34,13 @@ const emit = defineEmits(['update:open', 'task-saved']);
 
 const isEditMode = computed(() => !!props.task);
 
+const taskMetaStore = useTaskMetaStore();
+
 const formSchema = toTypedSchema(z.object({
     title: z.string().min(2, 'Название должно быть не короче 2 символов').max(255),
     description: z.string().nullable().optional(),
-    status: z.enum(['todo', 'in_progress', 'done', 'canceled']),
-    priority: z.enum(['low', 'medium', 'high']),
+    status: z.string().refine(val => taskMetaStore.getStatuses.includes(val), { message: 'Некорректный статус' }),
+    priority: z.string().refine(val => taskMetaStore.getPriorities.includes(val), { message: 'Некорректный приоритет' }),
     time_spent: z.number().min(0, 'Время не может быть отрицательным').optional(),
     assignee_id: z.number().nullable().optional(),
     due_date: z.string().nullable().optional(),
@@ -126,15 +129,14 @@ const onSubmit = handleSubmit(async (values) => {
                 <div class="grid grid-cols-2 gap-4">
                     <div class="grid gap-2">
                         <Label for="status">Статус</Label>
-                        <Select v-model="status" v-bind="statusAttrs">
+                        <Select v-model="status" v-bind="statusAttrs" :disabled="taskMetaStore.loading">
                             <SelectTrigger>
-                                <SelectValue placeholder="Выберите статус" />
+                                <SelectValue :placeholder="taskMetaStore.loading ? 'Загрузка статусов...' : 'Выберите статус'" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="todo">К выполнению</SelectItem>
-                                <SelectItem value="in_progress">В работе</SelectItem>
-                                <SelectItem value="done">Готово</SelectItem>
-                                <SelectItem value="canceled">Отменено</SelectItem>
+                                <SelectItem v-for="s in taskMetaStore.getStatuses" :key="s" :value="s">
+                                    {{ s }}
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                         <span v-if="errors.status" class="text-xs text-red-500">{{ errors.status }}</span>
@@ -142,14 +144,14 @@ const onSubmit = handleSubmit(async (values) => {
 
                     <div class="grid gap-2">
                         <Label for="priority">Приоритет</Label>
-                        <Select v-model="priority" v-bind="priorityAttrs">
+                        <Select v-model="priority" v-bind="priorityAttrs" :disabled="taskMetaStore.loading">
                             <SelectTrigger>
-                                <SelectValue placeholder="Выберите приоритет" />
+                                <SelectValue :placeholder="taskMetaStore.loading ? 'Загрузка приоритетов...' : 'Выберите приоритет'" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="low">Низкий</SelectItem>
-                                <SelectItem value="medium">Средний</SelectItem>
-                                <SelectItem value="high">Высокий</SelectItem>
+                                <SelectItem v-for="p in taskMetaStore.getPriorities" :key="p" :value="p">
+                                    {{ p }}
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                         <span v-if="errors.priority" class="text-xs text-red-500">{{ errors.priority }}</span>

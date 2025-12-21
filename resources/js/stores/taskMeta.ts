@@ -1,0 +1,38 @@
+import { defineStore } from 'pinia';
+import axios from 'axios';
+
+interface TaskMetaState {
+    statuses: string[];
+    priorities: string[];
+    loading: boolean;
+    error: string | null;
+}
+
+export const useTaskMetaStore = defineStore('taskMeta', {
+    state: (): TaskMetaState => ({
+        statuses: [],
+        priorities: [],
+        loading: false,
+        error: null,
+    }),
+    actions: {
+        async fetchTaskMeta() {
+            this.loading = true;
+            this.error = null;
+            try {
+                const response = await axios.get<{ statuses: string[], priorities: string[] }>('/tasks/meta');
+                this.statuses = response.data.statuses;
+                this.priorities = response.data.priorities;
+            } catch (error: any) {
+                this.error = error.message || 'Failed to fetch task metadata.';
+                console.error('Error fetching task meta:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+    },
+    getters: {
+        getStatuses: (state) => state.statuses,
+        getPriorities: (state) => state.priorities,
+    },
+});
