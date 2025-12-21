@@ -62,7 +62,7 @@ const onSubmit = handleSubmit(async (values) => {
     try {
         if (isEditMode.value) {
             // Режим редактирования (пока не используется, но готово на будущее)
-            await axios.patch(`/projects/${props.project!.id}`, values);
+            await axios.patch(`/projects/${props.project!.slug}`, values);
             toast.success(`Проект ${values.name} успешно обновлен.`);
         } else {
             // Режим создания

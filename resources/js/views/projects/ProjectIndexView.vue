@@ -16,8 +16,8 @@ const editingProject = ref<Project | null>(null);
 const fetchProjects = async () => {
     isLoading.value = true;
     try {
-        const { data } = await axios.get('/projects');
-        projects.value = data;
+        const response = await axios.get<{ data: Project[] }>('/projects');
+        projects.value = response.data.data;
     } catch (e) {
         console.error('Ошибка загрузки проектов:', e);
     } finally {

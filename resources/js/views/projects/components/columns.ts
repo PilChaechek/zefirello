@@ -1,6 +1,7 @@
 "use strict"
 
 import { h } from 'vue';
+import { RouterLink } from 'vue-router';
 import type { ColumnDef } from "@tanstack/vue-table"
 import type { Project } from "@/types/project"
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,10 @@ export const columns: ColumnDef<Project>[] = [
         onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
       }, () => ["Название", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })]);
     },
-    cell: ({ row }) => row.getValue("name"),
+    cell: ({ row }) => {
+        const project = row.original;
+        return h(RouterLink, { to: { name: 'project-detail', params: { slug: project.slug } }, class: 'text-primary hover:underline' }, () => project.name);
+    },
   },
   {
     accessorKey: "description",

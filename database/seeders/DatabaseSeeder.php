@@ -14,9 +14,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Сидер пользователей
+        // Сидер пользователей и задач
         $this->call([
             RolesAndAdminSeeder::class,
+            TaskSeeder::class,
         ]);
     }
 }

@@ -13,6 +13,7 @@ declare module 'vue-router' {
 }
 
 const AppLayout = () => import('@/layouts/AppLayout.vue');
+const ProjectLayout = () => import('@/layouts/ProjectLayout.vue');
 
 const routes: RouteRecordRaw[] = [
     {
@@ -39,18 +40,28 @@ const routes: RouteRecordRaw[] = [
             // Projects
             {
                 path: 'projects',
-                name: 'projects',
-                component: () => import('@/views/projects/ProjectIndexView.vue'),
-                meta: {
-                    title: 'Проекты',
-                    requiredRole: 'admin' // Оставляем для контроля видимости в UI
-                },
+                component: ProjectLayout,
                 children: [
+                    {
+                        path: '',
+                        name: 'projects',
+                        component: () => import('@/views/projects/ProjectIndexView.vue'),
+                        meta: {
+                            title: 'Проекты',
+                            requiredRole: 'admin'
+                        }
+                    },
                     {
                         path: ':slug',
                         name: 'project-detail',
                         component: () => import('@/views/projects/ProjectDetailView.vue'),
                         meta: { title: 'Детали проекта' }
+                    },
+                    {
+                        path: ':slug/tasks',
+                        name: 'project-tasks',
+                        component: () => import('@/views/tasks/TaskIndexView.vue'),
+                        meta: { title: 'Задачи проекта' }
                     }
                 ]
             }

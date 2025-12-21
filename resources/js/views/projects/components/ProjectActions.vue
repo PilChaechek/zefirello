@@ -37,7 +37,7 @@ const isDeleting = ref(false);
 const deleteProject = async () => {
     isDeleting.value = true;
     try {
-        await axios.delete(`/projects/${props.project.id}`);
+        await axios.delete(`/projects/${props.project.slug}`);
         toast.success(`Проект "${props.project.name}" успешно удален.`);
         emit('project-deleted');
     } catch (error: any) {

@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api\V1\Project;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Project\StoreProjectRequest;
 use App\Http\Requests\Api\V1\Project\UpdateProjectRequest;
+use App\Http\Resources\Api\V1\Project\ProjectResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
@@ -18,7 +20,7 @@ class ProjectController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Project::class);
 
@@ -30,13 +32,13 @@ class ProjectController extends Controller
             $projects = $user->projects()->with('users')->latest()->get();
         }
 
-        return response()->json($projects);
+        return ProjectResource::collection($projects);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProjectRequest $request): JsonResponse
+    public function store(StoreProjectRequest $request): ProjectResource
     {
         $this->authorize('create', Project::class);
 
@@ -51,29 +53,35 @@ class ProjectController extends Controller
         ]);
 
         $project->users()->attach($request->user()->id);
+        $project->load('users');
 
-        return response()->json($project, 201);
+        return new ProjectResource($project);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Project $project): ProjectResource
     {
-        //
+        $this->authorize('view', $project);
+
+        $project->load('users');
+
+        return new ProjectResource($project);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProjectRequest $request, Project $project): JsonResponse
+    public function update(UpdateProjectRequest $request, Project $project): ProjectResource
     {
         $this->authorize('update', $project);
 
         $validated = $request->validated();
         $project->update($validated);
+        $project->load('users');
 
-        return response()->json($project);
+        return new ProjectResource($project);
     }
 
     /**

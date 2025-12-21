@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Project\ProjectController;
+use App\Http\Controllers\Api\V1\Task\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
@@ -24,11 +25,14 @@ Route::prefix('v1')->group(function () {
 
         // Project Domain
         // Генерирует 5 маршрутов: index, store, show, update, destroy для ресурса проектов
-        Route::apiResource('projects', ProjectController::class);
+        Route::apiResource('projects', ProjectController::class)->parameters(['projects' => 'project:slug']);
         // Добавление пользователя в проект
         Route::post('projects/{project:slug}/users', [ProjectController::class, 'addUser']);
         // Удаление пользователя из проекта
         Route::delete('projects/{project:slug}/users/{user}', [ProjectController::class, 'removeUser']);
+
+        // Task Domain (Вложенный в проекты)
+        Route::apiResource('projects.tasks', TaskController::class);
     });
 
 });
