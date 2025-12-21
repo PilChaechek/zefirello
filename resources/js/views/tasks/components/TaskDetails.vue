@@ -25,8 +25,7 @@ const formattedTimeSpent = computed(() => {
 <template>
     <div v-if="task" class="space-y-4">
         <div class="space-y-2">
-            <h2 class="text-2xl font-bold">{{ task.title }}</h2>
-            <p class="text-sm text-muted-foreground">{{ task.description || 'Нет описания' }}</p>
+            <h2 class="text-xl">{{ task.title }}</h2>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
@@ -46,14 +45,11 @@ const formattedTimeSpent = computed(() => {
                 <p class="text-sm font-medium text-muted-foreground">Срок</p>
                 <p class="text-sm font-semibold">{{ formattedDueDate }}</p>
             </div>
-            <div class="space-y-1">
-                <p class="text-sm font-medium text-muted-foreground">Исполнитель</p>
-                <p class="text-sm font-semibold">{{ task.assignee?.name || 'Не назначен' }}</p>
-            </div>
-            <div class="space-y-1">
-                <p class="text-sm font-medium text-muted-foreground">Автор</p>
-                <p class="text-sm font-semibold">{{ task.creator?.name || 'Неизвестно' }}</p>
-            </div>
+        </div>
+
+        <div class="space-y-2">
+            <h3 class="text-lg font-bold">Описание</h3>
+            <p class="text-sm text-muted-foreground">{{ task.description || 'Нет описания' }}</p>
         </div>
     </div>
     <div v-else>

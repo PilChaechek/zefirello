@@ -42,11 +42,6 @@ export const columns = (
         cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.time_spent),
     },
     {
-        accessorKey: "assignee",
-        header: "Исполнитель",
-        cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.assignee?.name || 'Не назначен'),
-    },
-    {
         id: "actions",
         header: () => h('div', { class: 'text-right' }, 'Действия'),
         cell: ({ row }) => {

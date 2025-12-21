@@ -28,9 +28,8 @@ const sheetOpen = computed({
 
 <template>
     <Sheet v-model:open="sheetOpen">
-        <SheetContent class="w-[500px] sm:max-w-none md:w-1/2 lg:w-1/3 overflow-y-auto">
-            <SheetHeader class="flex-row items-center justify-between pr-6">
-                <SheetTitle>Детали задачи</SheetTitle>
+        <SheetContent class="w-[500px] sm:max-w-none md:w-1/2 lg:w-1/3 overflow-y-auto px-6">
+            <SheetHeader class="flex-row items-center justify-between pr-6 pl-0 pb-0">
                 <RouterLink
                     v-if="task"
                     :to="{ name: 'task-detail', params: { slug: projectSlug, taskId: task.id } }"
@@ -40,7 +39,7 @@ const sheetOpen = computed({
                     </Button>
                 </RouterLink>
             </SheetHeader>
-            <div class="mt-4">
+            <div>
                 <TaskDetails :task="task" />
             </div>
         </SheetContent>

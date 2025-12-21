@@ -4,13 +4,11 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import AppSidebar from "@/components/layout/AppSidebar.vue";
 import { Separator } from "@/components/ui/separator";
 import ModeToggle from "@/components/layout/ModeToggle.vue";
-import { useRoute } from 'vue-router';
-import { computed } from 'vue';
+import { useTitle } from '@/composables/useTitle';
 import 'vue-sonner/style.css'
 import { Toaster } from '@/components/ui/sonner';
 
-const route = useRoute();
-const pageTitle = computed(() => route.meta.title || 'Title');
+const { pageTitle } = useTitle();
 </script>
 
 <template>

@@ -21,6 +21,13 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { ref } from 'vue'
 
 const props = defineProps<{
@@ -54,11 +61,16 @@ const table = useVueTable({
         get sorting() { return sorting.value },
         get columnFilters() { return columnFilters.value },
     },
+    initialState: {
+        pagination: {
+            pageSize: 20,
+        },
+    },
 })
 </script>
 
 <template>
-    <div class="flex items-center py-4" v-if="props.searchColumn">
+    <div class="flex items-center" v-if="props.searchColumn">
         <Input
             class="max-w-sm dark:text-white"
             :placeholder="props.searchPlaceholder || 'Поиск...'"
@@ -103,8 +115,29 @@ const table = useVueTable({
         </Table>
     </div>
 
-    <!-- Пагинация (простая версия) -->
     <div class="flex items-center justify-end py-4 space-x-2 text-foreground">
+        <div class="flex items-center space-x-2">
+            <p class="text-sm font-medium">
+                Кол-во строк
+            </p>
+            <Select
+                :model-value="`${table.getState().pagination.pageSize}`"
+                @update:model-value="table.setPageSize"
+            >
+                <SelectTrigger class="h-8 w-[70px]">
+                    <SelectValue :placeholder="`${table.getState().pagination.pageSize}`" />
+                </SelectTrigger>
+                <SelectContent side="top">
+                    <SelectItem v-for="pageSize in [10, 20, 30, 40, 50]" :key="pageSize" :value="`${pageSize}`">
+                        {{ pageSize }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
+        <div class="flex w-[100px] items-center justify-center text-sm font-medium">
+            Стр. {{ table.getState().pagination.pageIndex + 1 }} из
+            {{ table.getPageCount() }}
+        </div>
         <Button
             variant="outline"
             size="sm"

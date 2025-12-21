@@ -1,6 +1,7 @@
 // src/router/index.ts
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import axios from 'axios';
 
 // 1. NEW: Расширяем типы Vue Router
 // говорим TS, что в meta может быть title.
@@ -91,25 +92,25 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore();
+    const appName = import.meta.env.VITE_APP_NAME;
 
-    // 1. Проверка сессии (твой код)
+    // Fetch user session if not present
     if (!authStore.user) {
         try {
             await authStore.getUser();
         } catch (error) {
-            // Игнорируем ошибку сессии
+            // Ignore session errors
         }
     }
 
     const isAuthenticated = !!authStore.user;
 
-    // 2. Обновление заголовка вкладки браузера
-    const appName = import.meta.env.VITE_APP_NAME;
+    // Update document title from meta
     document.title = to.meta.title
         ? `${to.meta.title} | ${appName}`
         : appName;
 
-    // 3. Логика редиректов (твой код)
+    // Redirect logic
     if (to.meta.requiresAuth && !isAuthenticated) {
         next({ name: 'login' });
     } else if (to.meta.guest && isAuthenticated) {

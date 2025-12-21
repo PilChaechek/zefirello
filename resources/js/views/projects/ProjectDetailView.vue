@@ -9,6 +9,7 @@ import TaskDetailSheet from '@/views/tasks/components/TaskDetailSheet.vue';
 import TaskFormDialog from '@/views/tasks/components/TaskFormDialog.vue';
 import DataTable from '@/components/ui/data-table/DataTable.vue';
 import { columns as taskColumnsDefinition } from '@/views/tasks/components/columns';
+import { useTitle } from '@/composables/useTitle';
 
 const route = useRoute();
 const projectSlug = route.params.slug as string;
@@ -16,6 +17,7 @@ const projectSlug = route.params.slug as string;
 const project = ref<Project | null>(null);
 const tasks = ref<Task[]>([]);
 const isLoading = ref(true);
+const { setTitle } = useTitle();
 
 // State for TaskDetailSheet
 const isSheetOpen = ref(false);
@@ -34,6 +36,12 @@ const fetchProjectAndTasks = async () => {
         ]);
         project.value = projectResponse.data.data;
         tasks.value = tasksResponse.data.data;
+
+        // Set the title after project is fetched
+        if (project.value) {
+            setTitle(`Проект: ${project.value.name}`);
+        }
+
     } catch (e) {
         console.error('Ошибка загрузки проекта или задач:', e);
     } finally {
@@ -73,14 +81,12 @@ onMounted(fetchProjectAndTasks);
         <div v-else-if="project">
             <!-- Project Details Section -->
             <div>
-                <h1 class="text-3xl font-bold text-foreground mb-2">Проект: {{ project.name }}</h1>
                 <p class="text-muted-foreground">{{ project.description }}</p>
             </div>
 
             <!-- Tasks Section -->
             <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-2xl font-bold text-foreground">Задачи</h2>
+                <div class="flex">
                     <Button @click="openCreateDialog">Добавить задачу</Button>
                 </div>
 

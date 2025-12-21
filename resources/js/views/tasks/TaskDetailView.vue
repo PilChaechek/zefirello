@@ -29,9 +29,9 @@ onMounted(fetchTask);
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="space-y-6 text-foreground">
         <div class="flex items-center justify-between">
-            <h1 class="text-3xl font-bold text-foreground">Задача #{{ taskId }}</h1>
+
             <RouterLink :to="{ name: 'project-detail', params: { slug: projectSlug } }">
                 <Button variant="outline">Вернуться к проекту</Button>
             </RouterLink>
@@ -41,7 +41,7 @@ onMounted(fetchTask);
             <span class="text-muted-foreground">Загрузка задачи...</span>
         </div>
 
-        <div v-else-if="task" class="p-6 border rounded-lg">
+        <div v-else-if="task" class="p-6 border border-border rounded-lg bg-background">
             <TaskDetails :task="task" />
         </div>
 

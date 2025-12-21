@@ -97,7 +97,7 @@ const onSubmit = handleSubmit(async (values) => {
                             </Field>
 
                             <Field>
-                                <Button type="submit" class="w-full" :disabled="isSubmitting">
+                                <Button type="submit" class="w-full h-11" :disabled="isSubmitting">
                                     {{ isSubmitting ? 'Вход...' : 'Войти' }}
                                 </Button>
                             </Field>
