@@ -56,6 +56,12 @@ const routes: RouteRecordRaw[] = [
                         name: 'project-detail',
                         component: () => import('@/views/projects/ProjectDetailView.vue'),
                         meta: { title: 'Детали проекта' }
+                    },
+                    {
+                        path: ':slug/tasks/:taskId',
+                        name: 'task-detail',
+                        component: () => import('@/views/tasks/TaskDetailView.vue'),
+                        meta: { title: 'Детали задачи' }
                     }
                 ]
             }

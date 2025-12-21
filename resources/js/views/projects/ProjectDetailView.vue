@@ -5,6 +5,7 @@ import axios from 'axios';
 import type { Project } from '@/types/project';
 import type { Task } from '@/types/task';
 import { Button } from '@/components/ui/button';
+import TaskDetailSheet from '@/views/tasks/components/TaskDetailSheet.vue';
 
 const route = useRoute();
 const projectSlug = route.params.slug as string;
@@ -12,6 +13,8 @@ const projectSlug = route.params.slug as string;
 const project = ref<Project | null>(null);
 const tasks = ref<Task[]>([]);
 const isLoading = ref(true);
+const isSheetOpen = ref(false);
+const selectedTask = ref<Task | null>(null);
 
 const fetchProjectAndTasks = async () => {
     isLoading.value = true;
@@ -28,6 +31,11 @@ const fetchProjectAndTasks = async () => {
     } finally {
         isLoading.value = false;
     }
+};
+
+const openTaskSheet = (task: Task) => {
+    selectedTask.value = task;
+    isSheetOpen.value = true;
 };
 
 onMounted(fetchProjectAndTasks);
@@ -67,7 +75,7 @@ onMounted(fetchProjectAndTasks);
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
-                            <tr v-for="task in tasks" :key="task.id">
+                            <tr v-for="task in tasks" :key="task.id" class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" @click="openTaskSheet(task)">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{{ task.id }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ task.title }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ task.status }}</td>
@@ -91,5 +99,7 @@ onMounted(fetchProjectAndTasks);
         <div v-else class="text-center py-10 text-muted-foreground">
             Проект не найден.
         </div>
+
+        <TaskDetailSheet v-model:open="isSheetOpen" :task="selectedTask" :project-slug="projectSlug" />
     </div>
 </template>
