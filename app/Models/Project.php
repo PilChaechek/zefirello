@@ -20,4 +20,22 @@ class Project extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    /**
+     * Get the route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    /**
+     * Get the tasks for the project.
+     */
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }

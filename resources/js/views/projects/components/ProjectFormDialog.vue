@@ -33,8 +33,8 @@ const isEditMode = computed(() => !!props.project);
 
 const formSchema = toTypedSchema(z.object({
     name: z.string().min(2, 'Название должно быть не короче 2 символов').max(255),
-    description: z.string().optional(),
-    slug: z.string().optional(),
+    description: z.string().nullable().optional(),
+    slug: z.string().nullable().optional(),
 }));
 
 const { handleSubmit, errors, defineField, resetForm, setValues, isSubmitting } = useForm({

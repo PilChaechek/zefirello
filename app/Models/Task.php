@@ -22,6 +22,15 @@ class Task extends Model
         'due_date',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'due_date' => 'date',
+    ];
+
     public function project()
     {
         return $this->belongsTo(Project::class);

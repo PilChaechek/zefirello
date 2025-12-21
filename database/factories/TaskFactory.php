@@ -18,6 +18,8 @@ class TaskFactory extends Factory
      */
     public function definition(): array
     {
+        $faker = \Faker\Factory::create('ru_RU');
+
         $statuses = ['todo', 'in_progress', 'done', 'canceled'];
         $priorities = ['low', 'medium', 'high'];
 
@@ -26,8 +28,8 @@ class TaskFactory extends Factory
         $assignee = User::inRandomOrder()->first();
 
         return [
-            'title' => $this->faker->sentence(),
-            'description' => $this->faker->paragraph(),
+            'title' => $faker->realText(50),
+            'description' => $faker->realText(200),
             'status' => $this->faker->randomElement($statuses),
             'priority' => $this->faker->randomElement($priorities),
             'order' => $this->faker->numberBetween(0, 100),
