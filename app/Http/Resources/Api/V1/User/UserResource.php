@@ -18,7 +18,7 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'roles' => $this->roles->map(fn($role) => [
+            'roles' => $this->roles->map(fn ($role) => [
                 'name' => $role->name,
                 'label' => ucfirst($role->name), // Делаем первую букву заглавной для красоты
             ]),

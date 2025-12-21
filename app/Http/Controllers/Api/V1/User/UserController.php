@@ -1,4 +1,5 @@
 <?php
+
 // app/Http/Controllers/Api/V1/User/UserController.php
 
 namespace App\Http\Controllers\Api\V1\User;
@@ -16,6 +17,7 @@ class UserController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $users = User::with('roles')->latest()->paginate(10);
+
         return UserResource::collection($users);
     }
 
@@ -43,7 +45,7 @@ class UserController extends Controller
         $data = $request->validated();
 
         // Если пароль передан и он не пустой, хешируем его
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         } else {
             // Иначе - убираем его из массива, чтобы не перезаписать на пустую строку

@@ -8,13 +8,15 @@ use App\Http\Requests\Api\V1\Task\UpdateTaskRequest;
 use App\Http\Resources\Api\V1\Task\TaskResource;
 use App\Models\Project;
 use App\Models\Task;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TaskController extends Controller
 {
-    use AuthorizesRequests;/**
+    use AuthorizesRequests;
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Project $project): AnonymousResourceCollection

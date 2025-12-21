@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //включает поддержку кук и сессий для Sanctum
+        // включает поддержку кук и сессий для Sanctum
         $middleware->statefulApi();
 
     })

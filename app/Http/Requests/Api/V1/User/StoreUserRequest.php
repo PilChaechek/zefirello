@@ -23,7 +23,7 @@ class StoreUserRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => [
                 'required',
-                Password::defaults() // Стандартные правила безопасности Laravel (мин 8 символов и т.д.)
+                Password::defaults(), // Стандартные правила безопасности Laravel (мин 8 символов и т.д.)
             ],
             'role' => ['required', 'string', 'exists:roles,name'],
         ];

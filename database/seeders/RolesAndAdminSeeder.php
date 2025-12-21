@@ -14,8 +14,8 @@ class RolesAndAdminSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $roleAdmin = Role::firstOrCreate(['name' => 'admin']);
-        $roleManager  = Role::firstOrCreate(['name' => 'manager']);
-        $roleUser  = Role::firstOrCreate(['name' => 'user']);
+        $roleManager = Role::firstOrCreate(['name' => 'manager']);
+        $roleUser = Role::firstOrCreate(['name' => 'user']);
 
         // 1. Получаем данные из конфига
         $adminEmail = config('services.admin.email');
@@ -31,7 +31,7 @@ class RolesAndAdminSeeder extends Seeder
             ['email' => $adminEmail],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make($adminPassword)
+                'password' => Hash::make($adminPassword),
             ]
         );
         $admin->syncRoles($roleAdmin);
