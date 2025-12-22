@@ -28,13 +28,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import DataTableFacetedFilter from '@/components/ui/data-table-faceted-filter/DataTableFacetedFilter.vue';
+import { XCircle } from 'lucide-vue-next';
+
+interface FacetedFilterColumn {
+    id: string;
+    title: string;
+    options: { label: string; value: string; icon?: string; color?: string }[];
+}
 
 const props = defineProps<{
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     searchPlaceholder?: string
     searchColumn?: string
+    facetedFilterColumns?: FacetedFilterColumn[];
 }>()
 
 const sorting = ref<SortingState>([])
@@ -67,16 +76,40 @@ const table = useVueTable({
         },
     },
 })
+
+const isFiltered = computed(() => columnFilters.value.length > 0);
 </script>
 
 <template>
-    <div class="flex items-center" v-if="props.searchColumn">
-        <Input
-            class="max-w-sm dark:text-white"
-            :placeholder="props.searchPlaceholder || 'Поиск...'"
-            :model-value="table.getColumn(props.searchColumn)?.getFilterValue() as string"
-            @update:model-value="table.getColumn(props.searchColumn)?.setFilterValue($event)"
-        />
+    <div class="flex items-center justify-between">
+        <div class="flex flex-wrap flex-1 items-center gap-2">
+            <Input
+                v-if="props.searchColumn"
+                class="max-w-sm dark:text-white"
+                :placeholder="props.searchPlaceholder || 'Поиск...'"
+                :model-value="table.getColumn(props.searchColumn)?.getFilterValue() as string"
+                @update:model-value="table.getColumn(props.searchColumn)?.setFilterValue($event)"
+            />
+
+            <template v-for="filterColumn in props.facetedFilterColumns" :key="filterColumn.id">
+                <DataTableFacetedFilter
+                    v-if="table.getColumn(filterColumn.id)"
+                    :column="table.getColumn(filterColumn.id)"
+                    :title="filterColumn.title"
+                    :options="filterColumn.options"
+                />
+            </template>
+
+            <Button
+                v-if="isFiltered"
+                variant="ghost"
+                @click="table.resetColumnFilters()"
+                class="h-8 px-2 lg:px-3 text-foreground"
+            >
+                Сбросить фильтры
+                <XCircle class="w-4 h-4 ml-2" />
+            </Button>
+        </div>
     </div>
 
     <div class="border rounded-md">

@@ -10,6 +10,7 @@ import TaskFormDialog from '@/views/tasks/components/TaskFormDialog.vue';
 import DataTable from '@/components/ui/data-table/DataTable.vue';
 import { columns as taskColumnsDefinition } from '@/views/tasks/components/columns';
 import { useTitle } from '@/composables/useTitle';
+import { useTaskMetaStore } from '@/stores/taskMeta';
 
 const route = useRoute();
 const projectSlug = route.params.slug as string;
@@ -18,6 +19,8 @@ const project = ref<Project | null>(null);
 const tasks = ref<Task[]>([]);
 const isLoading = ref(true);
 const { setTitle, setDescription } = useTitle();
+
+const taskMetaStore = useTaskMetaStore();
 
 // State for TaskDetailSheet
 const isSheetOpen = ref(false);
@@ -70,7 +73,23 @@ const taskColumns = computed(() =>
     taskColumnsDefinition(projectSlug, openEditDialog, fetchProjectAndTasks, openTaskSheet)
 );
 
-onMounted(fetchProjectAndTasks);
+const facetedFilterColumns = computed(() => [
+    {
+        id: 'status',
+        title: 'Статус',
+        options: taskMetaStore.getStatuses.map(s => ({
+            label: s.label,
+            value: s.value,
+            icon: s.icon,
+            color: s.color,
+        })),
+    },
+]);
+
+onMounted(() => {
+    fetchProjectAndTasks();
+    taskMetaStore.fetchTaskMeta();
+});
 </script>
 
 <template>
@@ -94,6 +113,7 @@ onMounted(fetchProjectAndTasks);
                     :data="tasks"
                     search-placeholder="Найти задачу..."
                     search-column="title"
+                    :faceted-filter-columns="facetedFilterColumns"
                 />
             </div>
         </div>

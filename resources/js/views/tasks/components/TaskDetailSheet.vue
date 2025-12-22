@@ -28,7 +28,7 @@ const sheetOpen = computed({
 
 <template>
     <Sheet v-model:open="sheetOpen">
-        <SheetContent class="w-[500px] sm:max-w-none md:w-1/2 lg:w-1/3 overflow-y-auto px-6">
+        <SheetContent class="w-full sm:w-[500px] md:w-1/2 lg:w-1/3 overflow-y-auto px-6">
             <SheetHeader class="flex-row items-center justify-between pr-6 pl-0 pb-0">
                 <RouterLink
                     v-if="task"

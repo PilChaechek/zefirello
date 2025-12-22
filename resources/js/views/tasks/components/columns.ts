@@ -28,7 +28,8 @@ export const columns = (
         cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.title),
     },
     {
-        accessorKey: "status.label",
+        id: 'status',
+        accessorFn: (row) => row.status.value,
         header: "Статус",
         cell: ({ row }) => h(IconLabel, { 
             icon: row.original.status.icon,
@@ -37,6 +38,9 @@ export const columns = (
             onClick: () => openTaskSheet(row.original),
             class: 'cursor-pointer'
         }),
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
     },
     {
         accessorKey: "priority.label",
