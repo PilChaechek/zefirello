@@ -17,7 +17,7 @@ const projectSlug = route.params.slug as string;
 const project = ref<Project | null>(null);
 const tasks = ref<Task[]>([]);
 const isLoading = ref(true);
-const { setTitle } = useTitle();
+const { setTitle, setDescription } = useTitle();
 
 // State for TaskDetailSheet
 const isSheetOpen = ref(false);
@@ -37,9 +37,10 @@ const fetchProjectAndTasks = async () => {
         project.value = projectResponse.data.data;
         tasks.value = tasksResponse.data.data;
 
-        // Set the title after project is fetched
+        // Set the title and description after project is fetched
         if (project.value) {
             setTitle(`Проект: ${project.value.name}`);
+            setDescription(project.value.description || '');
         }
 
     } catch (e) {
@@ -80,9 +81,7 @@ onMounted(fetchProjectAndTasks);
 
         <div v-else-if="project">
             <!-- Project Details Section -->
-            <div>
-                <p class="text-muted-foreground">{{ project.description }}</p>
-            </div>
+            <!-- Description is now handled by AppLayout via useTitle composable -->
 
             <!-- Tasks Section -->
             <div class="space-y-4">

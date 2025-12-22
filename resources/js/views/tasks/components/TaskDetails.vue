@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { Task } from '@/types/task';
+import IconLabel from '@/components/ui/icon-label/IconLabel.vue';
 
 const props = defineProps<{
     task: Task | null;
@@ -31,11 +32,22 @@ const formattedTimeSpent = computed(() => {
         <div class="grid grid-cols-2 gap-4">
             <div class="space-y-1">
                 <p class="text-sm font-medium text-muted-foreground">Статус</p>
-                <p class="text-sm font-semibold">{{ task.status }}</p>
+                <IconLabel
+                    v-if="task.status.icon"
+                    :icon="task.status.icon"
+                    :label="task.status.label"
+                    :color="task.status.color"
+                />
+                <p v-else class="text-sm font-semibold">{{ task.status.label }}</p>
             </div>
             <div class="space-y-1">
                 <p class="text-sm font-medium text-muted-foreground">Приоритет</p>
-                <p class="text-sm font-semibold">{{ task.priority }}</p>
+                <IconLabel
+                    v-if="task.priority.icon"
+                    :icon="task.priority.icon"
+                    :label="task.priority.label"
+                />
+                <p v-else class="text-sm font-semibold">{{ task.priority.label }}</p>
             </div>
             <div class="space-y-1">
                 <p class="text-sm font-medium text-muted-foreground">Затрачено</p>

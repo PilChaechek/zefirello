@@ -3,26 +3,38 @@ import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const pageTitle = ref('');
+const pageDescription = ref('');
 
 export function useTitle() {
     const route = useRoute();
 
-    const setTitle = (newTitle: string) => {
-        pageTitle.value = newTitle;
+    watch(() => route.meta.title as string | undefined, (newTitle) => {
+        if (newTitle) {
+            pageTitle.value = newTitle;
+            document.title = `Zefirello | ${newTitle}`;
+        } else {
+            pageTitle.value = '';
+            document.title = 'Zefirello';
+        }
+        // Clear description on route change unless explicitly set by the new route's meta
+        if (!route.meta.description) {
+            pageDescription.value = '';
+        }
+    }, { immediate: true });
+
+    const setTitle = (title: string) => {
+        pageTitle.value = title;
+        document.title = `Zefirello | ${title}`;
     };
 
-    // This watcher now ALWAYS updates the title from the route meta.
-    // This acts as a "reset" on every navigation.
-    // Components with dynamic titles will then overwrite it after they mount.
-    watch(
-        () => route.meta.title,
-        (newMetaTitle) => {
-            if (newMetaTitle) {
-                pageTitle.value = newMetaTitle as string;
-            }
-        },
-        { immediate: true }
-    );
+    const setDescription = (description: string) => {
+        pageDescription.value = description;
+    };
 
-    return { pageTitle, setTitle };
+    return {
+        pageTitle,
+        pageDescription,
+        setTitle,
+        setDescription,
+    };
 }

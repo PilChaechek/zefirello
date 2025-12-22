@@ -8,7 +8,7 @@ import { useTitle } from '@/composables/useTitle';
 import 'vue-sonner/style.css'
 import { Toaster } from '@/components/ui/sonner';
 
-const { pageTitle } = useTitle();
+const { pageTitle, pageDescription } = useTitle();
 </script>
 
 <template>
@@ -20,7 +20,10 @@ const { pageTitle } = useTitle();
                 <div class="flex items-center gap-2">
                     <SidebarTrigger class="-ml-1" />
                     <Separator orientation="vertical" class="mr-2 h-4" />
-                    <h2 class="font-semibold">{{ pageTitle }}</h2>
+                    <div class="flex flex-col">
+                        <h2 class="font-semibold">{{ pageTitle }}</h2>
+                        <p v-if="pageDescription" class="text-sm text-muted-foreground">{{ pageDescription }}</p>
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-2">
