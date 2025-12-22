@@ -15,6 +15,8 @@ class TaskMetaController extends Controller
             return [
                 'value' => $status->value,
                 'label' => $status->label(),
+                'icon' => $status->icon(),
+                'color' => $status->color(),
             ];
         }, TaskStatus::cases());
 
@@ -22,6 +24,7 @@ class TaskMetaController extends Controller
             return [
                 'value' => $priority->value,
                 'label' => $priority->label(),
+                'icon' => $priority->icon(),
             ];
         }, TaskPriority::cases());
 

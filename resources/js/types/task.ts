@@ -1,14 +1,19 @@
 import type { Project } from './project';
 import type { User } from './user';
 
+interface TaskMeta {
+    value: string;
+    label: string;
+    icon?: string;
+    color?: string;
+}
+
 export interface Task {
     id: number;
     title: string;
     description: string | null;
-    status: string;
-    status_label?: string; // Добавлено
-    priority: string;
-    priority_label?: string; // Добавлено
+    status: TaskMeta;
+    priority: TaskMeta;
     order: number;
     time_spent: number; // В минутах
     due_date: string | null;

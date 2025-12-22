@@ -6,6 +6,7 @@ import type { Task } from "@/types/task"
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-vue-next';
 import TaskActions from './TaskActions.vue';
+import IconLabel from '@/components/ui/icon-label/IconLabel.vue';
 
 export const columns = (
     projectSlug: string,
@@ -27,14 +28,25 @@ export const columns = (
         cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.title),
     },
     {
-        accessorKey: "status",
+        accessorKey: "status.label",
         header: "Статус",
-        cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.status_label),
+        cell: ({ row }) => h(IconLabel, { 
+            icon: row.original.status.icon,
+            label: row.original.status.label,
+            color: row.original.status.color,
+            onClick: () => openTaskSheet(row.original),
+            class: 'cursor-pointer'
+        }),
     },
     {
-        accessorKey: "priority",
+        accessorKey: "priority.label",
         header: "Приоритет",
-        cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.priority_label),
+        cell: ({ row }) => h(IconLabel, {
+            icon: row.original.priority.icon,
+            label: row.original.priority.label,
+            onClick: () => openTaskSheet(row.original),
+            class: 'cursor-pointer'
+        }),
     },
     {
         accessorKey: "time_spent",

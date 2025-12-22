@@ -22,6 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import IconLabel from '@/components/ui/icon-label/IconLabel.vue';
 
 // Props & Emits
 const props = defineProps<{
@@ -59,8 +60,8 @@ watch(() => props.task, (currentTask) => {
         setValues({
             title: currentTask.title,
             description: currentTask.description,
-            status: currentTask.status,
-            priority: currentTask.priority,
+            status: currentTask.status.value,
+            priority: currentTask.priority.value,
             time_spent: currentTask.time_spent,
             assignee_id: currentTask.assignee_id,
             due_date: currentTask.due_date,
@@ -135,7 +136,7 @@ const onSubmit = handleSubmit(async (values) => {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem v-for="s in taskMetaStore.getStatuses" :key="s.value" :value="s.value">
-                                    {{ s.label }}
+                                    <IconLabel :icon="s.icon!" :label="s.label" :color="s.color" />
                                 </SelectItem>
                             </SelectContent>
                         </Select>
@@ -150,7 +151,7 @@ const onSubmit = handleSubmit(async (values) => {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem v-for="p in taskMetaStore.getPriorities" :key="p.value" :value="p.value">
-                                    {{ p.label }}
+                                    <IconLabel :icon="p.icon!" :label="p.label" />
                                 </SelectItem>
                             </SelectContent>
                         </Select>

@@ -4,6 +4,8 @@ import axios from 'axios';
 interface MetaItem {
     value: string;
     label: string;
+    icon?: string;
+    color?: string;
 }
 
 interface TaskMetaState {
