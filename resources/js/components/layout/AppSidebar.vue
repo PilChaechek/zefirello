@@ -33,7 +33,7 @@ import {
 
 const auth = useAuthStore();
 const router = useRouter();
-const { isMobile } = useSidebar();
+const { isMobile, setOpenMobile } = useSidebar();
 
 const handleLogout = async () => {
     await auth.logout();
@@ -45,6 +45,12 @@ const menuItems = [
     { title: "Проекты", url: "/projects", icon: Folder },
     { title: "Пользователи", url: "/users", icon: Users },
 ];
+
+const handleLinkClick = () => {
+    if (isMobile.value) {
+        setOpenMobile(false);
+    }
+};
 </script>
 
 <template>
@@ -69,6 +75,7 @@ const menuItems = [
                                 :to="item.url"
                                 :active-class="item.exact ? '' : 'bg-accent text-accent-foreground'"
                                 :exact-active-class="item.exact ? 'bg-accent text-accent-foreground' : ''"
+                                @click="handleLinkClick"
                             >
                                 <component :is="item.icon" />
                                 <span>{{ item.title }}</span>

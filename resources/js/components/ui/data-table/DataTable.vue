@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/select'
 import { ref, computed } from 'vue'
 import DataTableFacetedFilter from '@/components/ui/data-table-faceted-filter/DataTableFacetedFilter.vue';
-import { XCircle } from 'lucide-vue-next';
+import { XCircle, ChevronLeft, ChevronRight } from 'lucide-vue-next';
 
 interface FacetedFilterColumn {
     id: string;
@@ -107,7 +107,7 @@ const isFiltered = computed(() => columnFilters.value.length > 0);
                 class="h-8 px-2 lg:px-3 text-foreground"
             >
                 Сбросить фильтры
-                <XCircle class="w-4 h-4 ml-2" />
+                <XCircle class="w-4 h-4" />
             </Button>
         </div>
     </div>
@@ -148,7 +148,7 @@ const isFiltered = computed(() => columnFilters.value.length > 0);
         </Table>
     </div>
 
-    <div class="flex items-center justify-end py-4 space-x-2 text-foreground">
+    <div class="flex items-center justify-end py-4 flex-wrap gap-2 text-foreground">
         <div class="flex items-center space-x-2">
             <p class="text-sm font-medium">
                 Кол-во строк
@@ -174,18 +174,22 @@ const isFiltered = computed(() => columnFilters.value.length > 0);
         <Button
             variant="outline"
             size="sm"
+            class="h-8 w-8 p-0"
             :disabled="!table.getCanPreviousPage()"
             @click="table.previousPage()"
         >
-            Назад
+            <span class="sr-only">Назад</span>
+            <ChevronLeft class="h-4 w-4" />
         </Button>
         <Button
             variant="outline"
             size="sm"
+            class="h-8 w-8 p-0"
             :disabled="!table.getCanNextPage()"
             @click="table.nextPage()"
         >
-            Вперед
+            <span class="sr-only">Вперед</span>
+            <ChevronRight class="h-4 w-4" />
         </Button>
     </div>
 </template>

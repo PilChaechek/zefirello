@@ -16,10 +16,7 @@ export const columns = (
 ): ColumnDef<Task>[] => [
     {
         accessorKey: "id",
-        header: ({ column }) => h(Button, {
-            variant: "ghost",
-            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-        }, () => ["ID", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })]),
+        header: "ID",
         cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.id),
     },
     {
@@ -30,7 +27,10 @@ export const columns = (
     {
         id: 'status',
         accessorFn: (row) => row.status.value,
-        header: "Статус",
+        header: ({ column }) => h(Button, {
+            variant: "ghost",
+            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+        }, () => ["Статус", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })]),
         cell: ({ row }) => h(IconLabel, { 
             icon: row.original.status.icon,
             label: row.original.status.label,
@@ -54,7 +54,10 @@ export const columns = (
     },
     {
         accessorKey: "time_spent",
-        header: "Время (мин)",
+        header: ({ column }) => h(Button, {
+            variant: "ghost",
+            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+        }, () => ["Время (мин)", h(ArrowUpDown, { class: "ml-2 h-4 w-4" })]),
         cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.time_spent),
     },
     {
