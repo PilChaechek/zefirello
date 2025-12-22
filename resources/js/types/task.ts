@@ -6,7 +6,9 @@ export interface Task {
     title: string;
     description: string | null;
     status: string;
+    status_label?: string; // Добавлено
     priority: string;
+    priority_label?: string; // Добавлено
     order: number;
     time_spent: number; // В минутах
     due_date: string | null;

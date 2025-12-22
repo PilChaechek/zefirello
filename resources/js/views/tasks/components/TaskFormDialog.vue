@@ -39,8 +39,8 @@ const taskMetaStore = useTaskMetaStore();
 const formSchema = toTypedSchema(z.object({
     title: z.string().min(2, 'Название должно быть не короче 2 символов').max(255),
     description: z.string().nullable().optional(),
-    status: z.string().refine(val => taskMetaStore.getStatuses.includes(val), { message: 'Некорректный статус' }),
-    priority: z.string().refine(val => taskMetaStore.getPriorities.includes(val), { message: 'Некорректный приоритет' }),
+    status: z.string().refine(val => taskMetaStore.getStatuses.some(s => s.value === val), { message: 'Некорректный статус' }),
+    priority: z.string().refine(val => taskMetaStore.getPriorities.some(p => p.value === val), { message: 'Некорректный приоритет' }),
     time_spent: z.number().min(0, 'Время не может быть отрицательным').optional(),
     assignee_id: z.number().nullable().optional(),
     due_date: z.string().nullable().optional(),
@@ -134,8 +134,8 @@ const onSubmit = handleSubmit(async (values) => {
                                 <SelectValue :placeholder="taskMetaStore.loading ? 'Загрузка статусов...' : 'Выберите статус'" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem v-for="s in taskMetaStore.getStatuses" :key="s" :value="s">
-                                    {{ s }}
+                                <SelectItem v-for="s in taskMetaStore.getStatuses" :key="s.value" :value="s.value">
+                                    {{ s.label }}
                                 </SelectItem>
                             </SelectContent>
                         </Select>
@@ -149,8 +149,8 @@ const onSubmit = handleSubmit(async (values) => {
                                 <SelectValue :placeholder="taskMetaStore.loading ? 'Загрузка приоритетов...' : 'Выберите приоритет'" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem v-for="p in taskMetaStore.getPriorities" :key="p" :value="p">
-                                    {{ p }}
+                                <SelectItem v-for="p in taskMetaStore.getPriorities" :key="p.value" :value="p.value">
+                                    {{ p.label }}
                                 </SelectItem>
                             </SelectContent>
                         </Select>

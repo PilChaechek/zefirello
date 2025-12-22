@@ -29,12 +29,12 @@ export const columns = (
     {
         accessorKey: "status",
         header: "Статус",
-        cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.status),
+        cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.status_label),
     },
     {
         accessorKey: "priority",
         header: "Приоритет",
-        cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.priority),
+        cell: ({ row }) => h('div', { onClick: () => openTaskSheet(row.original), class: 'cursor-pointer' }, row.original.priority_label),
     },
     {
         accessorKey: "time_spent",

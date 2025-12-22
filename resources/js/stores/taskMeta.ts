@@ -1,9 +1,14 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+interface MetaItem {
+    value: string;
+    label: string;
+}
+
 interface TaskMetaState {
-    statuses: string[];
-    priorities: string[];
+    statuses: MetaItem[];
+    priorities: MetaItem[];
     loading: boolean;
     error: string | null;
 }
@@ -20,7 +25,7 @@ export const useTaskMetaStore = defineStore('taskMeta', {
             this.loading = true;
             this.error = null;
             try {
-                const response = await axios.get<{ statuses: string[], priorities: string[] }>('/tasks/meta');
+                const response = await axios.get<{ statuses: MetaItem[], priorities: MetaItem[] }>('/tasks/meta');
                 this.statuses = response.data.statuses;
                 this.priorities = response.data.priorities;
             } catch (error: any) {
@@ -36,3 +41,4 @@ export const useTaskMetaStore = defineStore('taskMeta', {
         getPriorities: (state) => state.priorities,
     },
 });
+
