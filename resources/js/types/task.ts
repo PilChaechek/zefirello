@@ -1,3 +1,4 @@
+import type { Attachment } from './attachment';
 import type { Project } from './project';
 import type { User } from './user';
 
@@ -26,4 +27,5 @@ export interface Task {
     project?: Project;
     assignee?: User;
     creator?: User;
+    attachments?: Attachment[];
 }
