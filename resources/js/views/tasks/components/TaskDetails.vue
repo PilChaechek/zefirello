@@ -5,6 +5,7 @@ import IconLabel from '@/components/ui/icon-label/IconLabel.vue';
 
 const props = defineProps<{
     task: Task | null;
+    hideTitle?: boolean; // New prop
 }>();
 
 const formattedDueDate = computed(() => {
@@ -25,7 +26,7 @@ const formattedTimeSpent = computed(() => {
 
 <template>
     <div v-if="task" class="space-y-4">
-        <div class="space-y-2">
+        <div v-if="!hideTitle" class="space-y-2">
             <h2 class="text-xl">{{ task.title }}</h2>
         </div>
 
@@ -54,9 +55,10 @@ const formattedTimeSpent = computed(() => {
                 <p class="text-sm font-semibold">{{ formattedTimeSpent }}</p>
             </div>
             <div class="space-y-1">
-                <p class="text-sm font-medium text-muted-foreground">Срок</p>
-                <p class="text-sm font-semibold">{{ formattedDueDate }}</p>
+                <p class="text-sm font-medium text-muted-foreground">ID задачи</p>
+                <p class="text-sm font-semibold">#{{ task.id }}</p>
             </div>
+
         </div>
 
         <div class="space-y-2">

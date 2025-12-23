@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Api\V1\Task;
 
+use App\Http\Resources\Api\V1\Attachment\AttachmentResource;
 use App\Http\Resources\Api\V1\Project\ProjectResource;
 use App\Http\Resources\Api\V1\User\UserResource;
 use Illuminate\Http\Request;
@@ -37,6 +38,7 @@ class TaskResource extends JsonResource
             'project' => ProjectResource::make($this->whenLoaded('project')),
             'assignee' => UserResource::make($this->whenLoaded('assignee')),
             'creator' => UserResource::make($this->whenLoaded('creator')),
+            'attachments' => AttachmentResource::collection($this->whenLoaded('attachments')),
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),
         ];

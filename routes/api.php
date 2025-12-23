@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Attachment\AttachmentController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Project\ProjectController;
+use App\Http\Controllers\Api\V1\Task\TaskAttachmentController;
 use App\Http\Controllers\Api\V1\Task\TaskController;
 use App\Http\Controllers\Api\V1\User\UserController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +35,10 @@ Route::prefix('v1')->group(function () {
         // Task Domain (Вложенный в проекты)
         Route::get('/tasks/meta', [\App\Http\Controllers\Api\V1\Task\TaskMetaController::class, 'index']);
         Route::apiResource('projects.tasks', TaskController::class);
+
+        // Attachment Domain
+        Route::post('/tasks/{task}/attachments', [TaskAttachmentController::class, 'store']);
+        Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy']);
     });
 
 });

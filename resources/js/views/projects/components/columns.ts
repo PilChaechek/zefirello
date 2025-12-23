@@ -29,7 +29,9 @@ export const columns: ColumnDef<Project>[] = [
   {
     accessorKey: "description",
     header: "Описание",
-    cell: ({ row }) => row.getValue("description"),
+    cell: ({ row }) => {
+        return h('div', { class: 'truncate overflow-hidden max-w-md' }, row.getValue("description"));
+    },
   },
   {
     accessorKey: "slug",
