@@ -1,12 +1,32 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import type { Task } from '@/types/task';
 import IconLabel from '@/components/ui/icon-label/IconLabel.vue';
+import VueEasyLightbox from 'vue-easy-lightbox/external-css';
+import '@/../css/vendor/vue-easy-lightbox.css';
 
 const props = defineProps<{
     task: Task | null;
     hideTitle?: boolean; // New prop
 }>();
+
+const visible = ref(false);
+const index = ref(0);
+const imgs = ref<string[]>([]);
+
+const imageAttachments = computed(() => {
+    return props.task?.attachments?.filter(a => a.mime_type.startsWith('image/')) || [];
+});
+
+const showLightbox = (clickedIndex: number) => {
+    imgs.value = imageAttachments.value.map(a => a.url);
+    index.value = clickedIndex;
+    visible.value = true;
+};
+
+const handleHide = () => {
+    visible.value = false;
+};
 
 const formattedDueDate = computed(() => {
     if (!props.task?.due_date) return 'Не указан';
@@ -70,27 +90,46 @@ const formattedTimeSpent = computed(() => {
         <div v-if="task.attachments && task.attachments.length > 0" class="space-y-2">
             <h3 class="text-lg font-bold">Вложения</h3>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                <a
-                    v-for="attachment in task.attachments"
-                    :key="attachment.id"
-                    :href="attachment.url"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="group relative block w-full aspect-square bg-muted rounded-lg overflow-hidden border border-border hover:border-primary transition-colors"
-                >
-                    <img
+                <template v-for="(attachment, idx) in task.attachments" :key="attachment.id">
+                    <a
                         v-if="attachment.mime_type.startsWith('image/')"
-                        :src="attachment.url"
-                        :alt="attachment.original_name"
-                        class="w-full h-full object-cover"
-                    />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                    <p class="absolute bottom-2 left-2 right-2 text-xs text-white truncate group-hover:underline">
-                        {{ attachment.original_name }}
-                    </p>
-                </a>
+                        href="#"
+                        @click.prevent="showLightbox(imageAttachments.findIndex(img => img.id === attachment.id))"
+                        class="group relative block w-full aspect-square bg-muted rounded-lg overflow-hidden border border-border hover:border-primary transition-colors"
+                    >
+                        <img
+                            :src="attachment.url"
+                            :alt="attachment.original_name"
+                            class="w-full h-full object-cover"
+                        />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <p class="absolute bottom-2 left-2 right-2 text-xs text-white truncate group-hover:underline">
+                            {{ attachment.original_name }}
+                        </p>
+                    </a>
+                    <a
+                        v-else
+                        :href="attachment.url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="group relative block w-full aspect-square bg-muted rounded-lg overflow-hidden border border-border hover:border-primary transition-colors"
+                    >
+                        <!-- You can add a generic icon for non-image files here -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <p class="absolute bottom-2 left-2 right-2 text-xs text-white truncate group-hover:underline">
+                            {{ attachment.original_name }}
+                        </p>
+                    </a>
+                </template>
             </div>
         </div>
+        <VueEasyLightbox
+            :visible="visible"
+            :imgs="imgs"
+            :index="index"
+            @hide="handleHide"
+            :moveDisabled="true"
+        />
     </div>
     <div v-else>
         <p class="text-muted-foreground">Выберите задачу для просмотра деталей.</p>
