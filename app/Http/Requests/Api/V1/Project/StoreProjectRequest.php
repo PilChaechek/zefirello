@@ -25,6 +25,8 @@ class StoreProjectRequest extends FormRequest
             'name' => ['required', 'string', 'max:255', 'unique:projects,name'],
             'description' => ['nullable', 'string'],
             'slug' => ['nullable', 'string', 'max:255', 'alpha_dash', 'unique:projects,slug'],
+            'users' => ['nullable', 'array'],
+            'users.*' => ['integer', 'exists:users,id'],
         ];
     }
 }

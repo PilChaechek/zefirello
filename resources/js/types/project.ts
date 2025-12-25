@@ -1,3 +1,5 @@
+import type { User } from './user';
+
 export interface Project {
     id: number;
     name: string;
@@ -5,4 +7,5 @@ export interface Project {
     description: string;
     created_at: string;
     updated_at: string;
+    users?: User[];
 }

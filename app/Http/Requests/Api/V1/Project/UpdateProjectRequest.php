@@ -28,6 +28,8 @@ class UpdateProjectRequest extends FormRequest
             'name' => ['sometimes', 'string', 'max:255', Rule::unique('projects')->ignore($projectId)],
             'description' => ['sometimes', 'nullable', 'string'],
             'slug' => ['sometimes', 'string', 'max:255', 'alpha_dash', Rule::unique('projects')->ignore($projectId)],
+            'users' => ['sometimes', 'nullable', 'array'],
+            'users.*' => ['integer', 'exists:users,id'],
         ];
     }
 }

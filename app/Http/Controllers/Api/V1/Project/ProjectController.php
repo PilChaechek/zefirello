@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class ProjectController extends Controller
@@ -43,7 +44,6 @@ class ProjectController extends Controller
         $this->authorize('create', Project::class);
 
         $validated = $request->validated();
-
         $slug = $validated['slug'] ?? Str::slug($validated['name']);
 
         $project = Project::create([
@@ -52,7 +52,14 @@ class ProjectController extends Controller
             'slug' => $slug,
         ]);
 
-        $project->users()->attach($request->user()->id);
+        // Прикрепляем всех пользователей из запроса
+        if (! empty($validated['users'])) {
+            $project->users()->attach($validated['users']);
+        } else {
+            // Если массив пуст, прикрепляем только создателя
+            $project->users()->attach($request->user()->id);
+        }
+
         $project->load('users');
 
         return new ProjectResource($project);
@@ -78,7 +85,16 @@ class ProjectController extends Controller
         $this->authorize('update', $project);
 
         $validated = $request->validated();
-        $project->update($validated);
+
+        // 1. Обновляем поля самого проекта, исключая ключ 'users'
+        $projectData = Arr::except($validated, ['users']);
+        $project->update($projectData);
+
+        // 2. Отдельно и явно синхронизируем пользователей
+        if (array_key_exists('users', $validated)) {
+            $project->users()->sync($validated['users'] ?? []);
+        }
+
         $project->load('users');
 
         return new ProjectResource($project);
