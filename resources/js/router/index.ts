@@ -10,6 +10,7 @@ declare module 'vue-router' {
         title?: string // Опциональный заголовок
         requiresAuth?: boolean
         guest?: boolean
+        requiredRole?: string // NEW: Опциональная требуемая роль (например, 'admin')
     }
 }
 
@@ -48,8 +49,7 @@ const routes: RouteRecordRaw[] = [
                         name: 'projects',
                         component: () => import('@/views/projects/ProjectIndexView.vue'),
                         meta: {
-                            title: 'Проекты',
-                            requiredRole: 'admin'
+                            title: 'Проекты'
                         }
                     },
                     {
@@ -115,6 +115,9 @@ router.beforeEach(async (to, from, next) => {
         next({ name: 'login' });
     } else if (to.meta.guest && isAuthenticated) {
         next({ name: 'home' });
+    } else if (to.meta.requiredRole && !authStore.hasRole(to.meta.requiredRole)) {
+        // Если маршрут требует определенную роль, а у пользователя ее нет
+        next({ name: 'not-found' });
     } else {
         next();
     }

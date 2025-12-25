@@ -72,9 +72,15 @@ const openEditDialog = (task: Task) => {
     isFormDialogOpen.value = true;
 };
 
-const taskColumns = computed(() =>
-    taskColumnsDefinition(projectSlug, openEditDialog, fetchProjectAndTasks, openTaskSheet)
-);
+const taskColumns = computed(() => {
+    const columns = taskColumnsDefinition(projectSlug, openEditDialog, fetchProjectAndTasks, openTaskSheet);
+
+    if (authStore.hasRole('admin') || authStore.hasRole('manager')) {
+        return columns;
+    }
+
+    return columns.filter(column => column.id !== 'actions');
+});
 
 const facetedFilterColumns = computed(() => [
     {

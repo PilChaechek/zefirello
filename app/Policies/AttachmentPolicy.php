@@ -31,8 +31,8 @@ class AttachmentPolicy
      */
     public function create(User $user): bool
     {
-        // Только администраторы могут создавать вложения
-        return $user->hasRole('admin');
+        // Только администраторы и менеджеры могут создавать вложения
+        return $user->hasAnyRole('admin', 'manager');
     }
 
     /**

@@ -31,6 +31,8 @@ import {
     Home, Users, LogOut, User, ChevronsUpDown, Folder
 } from 'lucide-vue-next';
 
+import { computed } from 'vue';
+
 const auth = useAuthStore();
 const router = useRouter();
 const { isMobile, setOpenMobile } = useSidebar();
@@ -43,8 +45,17 @@ const handleLogout = async () => {
 const menuItems = [
     { title: "Главная", url: "/", icon: Home , exact: true},
     { title: "Проекты", url: "/projects", icon: Folder },
-    { title: "Пользователи", url: "/users", icon: Users },
+    { title: "Пользователи", url: "/users", icon: Users, requiredRole: 'admin' },
 ];
+
+const filteredMenuItems = computed(() => {
+    return menuItems.filter(item => {
+        if (item.requiredRole) {
+            return auth.hasRole(item.requiredRole);
+        }
+        return true; // Если роль не требуется, показывать всем
+    });
+});
 
 const handleLinkClick = () => {
     if (isMobile.value) {
@@ -69,7 +80,7 @@ const handleLinkClick = () => {
         <SidebarContent>
             <SidebarGroup>
                 <SidebarMenu>
-                    <SidebarMenuItem v-for="item in menuItems" :key="item.title">
+                    <SidebarMenuItem v-for="item in filteredMenuItems" :key="item.title">
                         <SidebarMenuButton as-child tooltip="item.title">
                             <RouterLink
                                 :to="item.url"

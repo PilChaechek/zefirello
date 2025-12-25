@@ -148,7 +148,7 @@ const formattedTimeSpent = computed(() => {
 
         <!-- Attachments Section -->
         <div class="space-y-4">
-            <TaskAttachmentForm :task="task" @attachments-added="handleAttachmentsAdded" />
+            <TaskAttachmentForm v-if="authStore.hasRole('admin') || authStore.hasRole('manager')" :task="task" @attachments-added="handleAttachmentsAdded" />
 
             <div v-if="task.attachments && task.attachments.length > 0" class="space-y-2">
                 <h3 class="text-lg font-bold">Вложения</h3>
