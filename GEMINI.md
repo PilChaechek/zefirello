@@ -96,7 +96,24 @@
     *   В компонентах Vue используйте `<script setup lang="ts">`.
     *   Описывайте интерфейсы/типы для пропсов, ответов API и состояния Pinia.
     *   Избегайте использования `any`, стремитесь к строгой типизации.
-*   **Стиль кода (Бэкенд):** Используется **Laravel Pint** для форматирования кода в соответствии со стандартом PSR-12.
+* **Стиль кода (Бэкенд):** Используется **Laravel Pint** для форматирования кода в соответствии со стандартом PSR-12.
+* **Использование `use` для импорта классов (Бэкенд):** Всегда используйте `use` для импорта классов в начале файла вместо указания полного FQCN (Fully Qualified Class Name) в коде. Это улучшает читаемость и сокращает длину строк.
+    *   **Правильно:**
+        ```php
+        use App\Models\Attachment;
+        // ...
+        public function store(Request $request)
+        {
+            $attachment = Attachment::create([...]);
+        }
+        ```
+    *   **Неправильно:**
+        ```php
+        public function store(Request $request)
+        {
+            $attachment = \App\Models\Attachment::create([...]);
+        }
+        ```
 *   **API:** API версионируется и следует принципам RESTful.
 * **Backend Structure (Enterprise Standard):**
     *   **Controllers:** Максимально "тонкие". валидация (`FormRequest`) и возврат ответа (`JsonResource`).

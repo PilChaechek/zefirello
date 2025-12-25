@@ -38,23 +38,31 @@ const openEditDialog = (project: Project) => {
     isFormDialogOpen.value = true;
 };
 
-// Динамически вставляем компонент ProjectActions в колонку "Действия"
-const columns = originalColumns.map(column => {
-    if (column.id === 'actions') {
-        return {
-            ...column,
-            header: () => h('div', { class: 'text-right' }, 'Действия'),
-            cell: ({ row }) => {
-                const project = row.original;
-                return h('div', { class: 'relative text-right' }, h(ProjectActions, {
-                    project: project,
-                    onEdit: () => openEditDialog(project),
-                    onProjectDeleted: fetchProjects,
-                }));
-            },
-        };
+// Динамически вставляем компонент ProjectActions и фильтруем колонку "Действия"
+const columns = computed(() => {
+    const mappedColumns = originalColumns.map(column => {
+        if (column.id === 'actions') {
+            return {
+                ...column,
+                header: () => h('div', { class: 'text-right' }, 'Действия'),
+                cell: ({ row }) => {
+                    const project = row.original;
+                    return h('div', { class: 'relative text-right' }, h(ProjectActions, {
+                        project: project,
+                        onEdit: () => openEditDialog(project),
+                        onProjectDeleted: fetchProjects,
+                    }));
+                },
+            };
+        }
+        return column;
+    });
+
+    if (authStore.hasRole('admin')) {
+        return mappedColumns;
     }
-    return column;
+
+    return mappedColumns.filter(column => column.id !== 'actions');
 });
 
 onMounted(fetchProjects);

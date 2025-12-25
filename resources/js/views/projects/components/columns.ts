@@ -23,7 +23,7 @@ export const columns: ColumnDef<Project>[] = [
     },
     cell: ({ row }) => {
         const project = row.original;
-        return h(RouterLink, { to: { name: 'project-detail', params: { slug: project.slug } }, class: 'text-primary hover:underline' }, () => project.name);
+        return h(RouterLink, { to: { name: 'project-detail', params: { slug: project.slug } }, class: 'block p-2 hover:underline focus:outline-none' }, () => project.name);
     },
   },
   {

@@ -11,6 +11,9 @@ import DataTable from '@/components/ui/data-table/DataTable.vue';
 import { columns as taskColumnsDefinition } from '@/views/tasks/components/columns';
 import { useTitle } from '@/composables/useTitle';
 import { useTaskMetaStore } from '@/stores/taskMeta';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
 
 const route = useRoute();
 const projectSlug = route.params.slug as string;
@@ -105,7 +108,7 @@ onMounted(() => {
             <!-- Tasks Section -->
             <div class="space-y-4">
                 <div class="flex">
-                    <Button @click="openCreateDialog">Добавить задачу</Button>
+                    <Button v-if="authStore.hasRole('admin')" @click="openCreateDialog">Добавить задачу</Button>
                 </div>
 
                 <DataTable
@@ -125,6 +128,7 @@ onMounted(() => {
         <!-- Modals and Sheets -->
         <TaskDetailSheet v-model:open="isSheetOpen" :task="selectedTask" :project-slug="projectSlug" />
         <TaskFormDialog
+            v-if="authStore.hasRole('admin')"
             v-model:open="isFormDialogOpen"
             :task="editingTask"
             :project-slug="projectSlug"

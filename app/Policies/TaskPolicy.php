@@ -31,8 +31,8 @@ class TaskPolicy
      */
     public function create(User $user, Project $project): bool
     {
-        // Пользователь может создавать задачи, если он является участником проекта
-        return $project->users->contains($user);
+        // Пользователь может создавать задачи, только если он администратор
+        return $user->hasRole('admin');
     }
 
     /**

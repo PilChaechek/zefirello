@@ -31,8 +31,8 @@ class AttachmentPolicy
      */
     public function create(User $user): bool
     {
-        // Авторизация для создания вложений делегируется политике родительской сущности (например, TaskPolicy).
-        return true;
+        // Только администраторы могут создавать вложения
+        return $user->hasRole('admin');
     }
 
     /**
