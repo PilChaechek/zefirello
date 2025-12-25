@@ -49,14 +49,14 @@
     ```
 2.  Запустите контейнеры (в фоновом режиме):
     ```bash
-    sail up -d
+    ./vendor/bin/sail up -d
     ```
 3.  Установите зависимости и выполните миграции:
     ```bash
-    sail composer install
-    sail npm install
-    sail artisan key:generate
-    sail artisan migrate
+    ./vendor/bin/sail composer install
+    ./vendor/bin/sail npm install
+    ./vendor/bin/sail artisan key:generate
+    ./vendor/bin/sail artisan migrate
     ```
 
 **Разработка:**
@@ -66,14 +66,14 @@
 1.  **Запуск бэкенда (Laravel):**
     Если контейнеры еще не запущены:
     ```bash
-    sail up -d
+    ./vendor/bin/sail up -d
     ```
     *   **Backend URL:** http://localhost:8001
 
 2.  **Запуск фронтенда (Vite):**
     Сервер разработки фронтенда запускается через Sail:
     ```bash
-    sail npm run dev
+    ./vendor/bin/sail npm run dev
     ```
 *   **Frontend URL:** http://localhost:5174
 
@@ -82,13 +82,13 @@
 Запуск тестов осуществляется также через Sail:
 
 ```bash
-sail composer run test
+./vendor/bin/sail composer run test
 # или
-sail artisan test
+./vendor/bin/sail artisan test
 ```
 
 ## Соглашения о разработке
-
+* Все комментарии к проекту и общение на русском языке
 *   **Среда выполнения (Sail):** Все команды CLI (composer, artisan, npm) должны выполняться через команду `sail`.
     *   Пример: `./vendor/bin/sail artisan make:model Project`
     *   Пример: `./vendor/bin/sail npm install`
