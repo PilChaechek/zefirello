@@ -17,12 +17,16 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Getters
     const isAuthenticated = computed(() => !!user.value);
+    const roles = computed(() => user.value?.roles?.map(role => role.name) ?? []);
+    const hasRole = computed(() => {
+        return (roleName: string) => roles.value.includes(roleName);
+    });
 
     // Actions
     const getUser = async () => {
         try {
             const response = await axios.get('/user');
-            user.value = response.data;
+            user.value = response.data.data; // Ответ обернут в { "data": { ... } }
         } catch (error) {
             user.value = null;
         }
@@ -57,6 +61,8 @@ export const useAuthStore = defineStore('auth', () => {
         user,
         errors,
         isAuthenticated,
+        roles,
+        hasRole,
         login,
         logout,
         getUser

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, h } from 'vue';
+import { ref, onMounted, h, computed } from 'vue';
 import axios from 'axios';
 import type { Project } from '@/types/project';
 import ProjectFormDialog from './components/ProjectFormDialog.vue';
@@ -7,6 +7,9 @@ import ProjectActions from './components/ProjectActions.vue';
 import DataTable from '@/components/ui/data-table/DataTable.vue';
 import { columns as originalColumns } from './components/columns';
 import { Button } from '@/components/ui/button';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
 
 const projects = ref<Project[]>([]);
 const isLoading = ref(true);
@@ -60,7 +63,7 @@ onMounted(fetchProjects);
 <template>
     <div class="space-y-6">
         <div class="flex items-center justify-between">
-            <Button @click="openCreateDialog">Добавить проект</Button>
+            <Button v-if="authStore.hasRole('admin')" @click="openCreateDialog">Добавить проект</Button>
         </div>
 
         <div v-if="isLoading" class="flex justify-center py-10">
@@ -76,6 +79,7 @@ onMounted(fetchProjects);
         />
 
         <ProjectFormDialog
+            v-if="authStore.hasRole('admin')"
             v-model:open="isFormDialogOpen"
             :project="editingProject"
             @project-saved="fetchProjects"

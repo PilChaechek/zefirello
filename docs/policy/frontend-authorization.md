@@ -11,20 +11,20 @@
 ```typescript
 // stores/auth.ts
 import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
 
-export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    user: null as User | null,
-    roles: [] as string[], // e.g., ['admin', 'manager']
-    permissions: [] as string[], // e.g., ['create projects', 'delete users']
-  }),
-  // ...
-  getters: {
-    // Наши универсальные инструменты для проверки прав в любом компоненте
-    hasRole: (state) => (role: string) => state.roles.includes(role),
-    can: (state) => (permission: string) => state.permissions.includes(permission),
-  }
-})
+export const useAuthStore = defineStore('auth', () => {
+  const user = ref<User | null>(null);
+  const roles = computed(() => user.value?.roles?.map(role => role.name) ?? []);
+
+  // Наши универсальные инструменты для проверки прав в любом компоненте
+  const hasRole = computed(() => (roleName: string) => roles.value.includes(roleName));
+  const can = computed(() => (permission: string) => user.value?.permissions?.includes(permission) ?? false);
+
+  // ... actions, other state
+
+  return { user, roles, hasRole, can /* ... other returns */ };
+});
 ```
 Этот стор — наш "паспортный стол". Любой компонент может обратиться к нему, чтобы проверить права.
 
