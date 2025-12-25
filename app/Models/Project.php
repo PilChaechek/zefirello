@@ -14,6 +14,7 @@ class Project extends Model
         'name',
         'slug',
         'description',
+        'creator_id',
     ];
 
     public function users(): BelongsToMany

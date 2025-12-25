@@ -50,6 +50,7 @@ class ProjectController extends Controller
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
             'slug' => $slug,
+            'creator_id' => $request->user()->id,
         ]);
 
         // Прикрепляем всех пользователей из запроса
