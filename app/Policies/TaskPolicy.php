@@ -38,10 +38,10 @@ class TaskPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Project $project, Task $task): bool
+    public function update(User $user, Task $task): bool
     {
-        // Пользователь может обновлять задачу, если он является участником проекта, и задача относится к этому проекту
-        return $project->users->contains($user) && $task->project_id === $project->id;
+        // Пользователь может обновлять задачу, если он является участником проекта
+        return $task->project->users->contains($user);
     }
 
     /**

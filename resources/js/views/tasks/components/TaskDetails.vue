@@ -4,15 +4,37 @@ import type { Task } from '@/types/task';
 import IconLabel from '@/components/ui/icon-label/IconLabel.vue';
 import VueEasyLightbox from 'vue-easy-lightbox/external-css';
 import '@/../css/vendor/vue-easy-lightbox.css';
+import TaskAttachmentForm from './TaskAttachmentForm.vue';
+import type { Attachment } from '@/types/attachment';
+import { useAuthStore } from '@/stores/auth';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button';
+import { Trash2 } from 'lucide-vue-next';
+import axios from 'axios';
+import { toast } from 'vue-sonner';
 
 const props = defineProps<{
     task: Task | null;
     hideTitle?: boolean; // New prop
 }>();
 
+const authStore = useAuthStore();
+const user = computed(() => authStore.user);
+
 const visible = ref(false);
 const index = ref(0);
 const imgs = ref<string[]>([]);
+const isDeleteDialogOpen = ref(false);
+const attachmentToDelete = ref<Attachment | null>(null);
 
 const imageAttachments = computed(() => {
     return props.task?.attachments?.filter(a => a.mime_type.startsWith('image/')) || [];
@@ -27,6 +49,44 @@ const showLightbox = (clickedIndex: number) => {
 const handleHide = () => {
     visible.value = false;
 };
+
+const handleAttachmentsAdded = (newAttachments: Attachment[]) => {
+    if (props.task) {
+        if (!props.task.attachments) {
+            props.task.attachments = [];
+        }
+        props.task.attachments.push(...newAttachments);
+    }
+};
+
+const confirmAttachmentDelete = (attachment: Attachment) => {
+    attachmentToDelete.value = attachment;
+    isDeleteDialogOpen.value = true;
+};
+
+const deleteAttachment = async () => {
+    if (!attachmentToDelete.value) return;
+
+    try {
+        await axios.delete(`/attachments/${attachmentToDelete.value.id}`);
+
+        if (props.task && props.task.attachments) {
+            const index = props.task.attachments.findIndex(a => a.id === attachmentToDelete.value!.id);
+            if (index > -1) {
+                props.task.attachments.splice(index, 1);
+            }
+        }
+
+        toast.success('Вложение успешно удалено');
+    } catch (error) {
+        console.error('Ошибка удаления вложения:', error);
+        toast.error('Не удалось удалить вложение');
+    } finally {
+        isDeleteDialogOpen.value = false;
+        attachmentToDelete.value = null;
+    }
+};
+
 
 const formattedDueDate = computed(() => {
     if (!props.task?.due_date) return 'Не указан';
@@ -87,40 +147,48 @@ const formattedTimeSpent = computed(() => {
         </div>
 
         <!-- Attachments Section -->
-        <div v-if="task.attachments && task.attachments.length > 0" class="space-y-2">
-            <h3 class="text-lg font-bold">Вложения</h3>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                <template v-for="(attachment, idx) in task.attachments" :key="attachment.id">
-                    <a
-                        v-if="attachment.mime_type.startsWith('image/')"
-                        href="#"
-                        @click.prevent="showLightbox(imageAttachments.findIndex(img => img.id === attachment.id))"
-                        class="group relative block w-full aspect-square bg-muted rounded-lg overflow-hidden border border-border hover:border-primary transition-colors"
-                    >
-                        <img
-                            :src="attachment.url"
-                            :alt="attachment.original_name"
-                            class="w-full h-full object-cover"
-                        />
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                        <p class="absolute bottom-2 left-2 right-2 text-xs text-white truncate group-hover:underline">
+        <div class="space-y-4">
+            <TaskAttachmentForm :task="task" @attachments-added="handleAttachmentsAdded" />
+
+            <div v-if="task.attachments && task.attachments.length > 0" class="space-y-2">
+                <h3 class="text-lg font-bold">Вложения</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <div v-for="attachment in task.attachments" :key="attachment.id" class="group relative">
+                        <a
+                            v-if="attachment.mime_type.startsWith('image/')"
+                            href="#"
+                            @click.prevent="showLightbox(imageAttachments.findIndex(img => img.id === attachment.id))"
+                            class="block w-full aspect-square bg-muted rounded-lg overflow-hidden border border-border hover:border-primary transition-colors"
+                        >
+                            <img :src="attachment.url" :alt="attachment.original_name" class="w-full h-full object-cover" />
+                        </a>
+                        <a
+                            v-else
+                            :href="attachment.url"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="block w-full aspect-square bg-muted rounded-lg overflow-hidden border border-border hover:border-primary transition-colors flex items-center justify-center"
+                        >
+                            <!-- You can add a generic icon for non-image files here -->
+                            <p class="text-xs p-2 text-center">{{ attachment.original_name }}</p>
+                        </a>
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
+                        <p class="absolute bottom-2 left-2 right-2 text-xs text-white truncate pointer-events-none">
                             {{ attachment.original_name }}
                         </p>
-                    </a>
-                    <a
-                        v-else
-                        :href="attachment.url"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="group relative block w-full aspect-square bg-muted rounded-lg overflow-hidden border border-border hover:border-primary transition-colors"
-                    >
-                        <!-- You can add a generic icon for non-image files here -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                        <p class="absolute bottom-2 left-2 right-2 text-xs text-white truncate group-hover:underline">
-                            {{ attachment.original_name }}
-                        </p>
-                    </a>
-                </template>
+
+                        <Button
+                            v-if="user && user.id === attachment.user_id"
+                            variant="destructive"
+                            size="icon"
+                            class="absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                            @click="confirmAttachmentDelete(attachment)"
+                        >
+                            <Trash2 class="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
             </div>
         </div>
         <VueEasyLightbox
@@ -130,8 +198,23 @@ const formattedTimeSpent = computed(() => {
             @hide="handleHide"
             :moveDisabled="true"
         />
+        <AlertDialog :open="isDeleteDialogOpen" @update:open="isDeleteDialogOpen = $event">
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Вы абсолютно уверены?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Это действие необратимо. Вложение "{{ attachmentToDelete?.original_name }}" будет удалено навсегда.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Отмена</AlertDialogCancel>
+                    <AlertDialogAction @click="deleteAttachment" class="bg-red-600 hover:bg-red-700 text-white">Удалить</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </div>
     <div v-else>
         <p class="text-muted-foreground">Выберите задачу для просмотра деталей.</p>
     </div>
 </template>
+

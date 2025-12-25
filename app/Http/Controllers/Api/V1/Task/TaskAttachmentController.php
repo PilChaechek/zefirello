@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Attachment\StoreAttachmentRequest;
 use App\Http\Resources\Api\V1\Attachment\AttachmentResource;
 use App\Models\Task;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class TaskAttachmentController extends Controller
 {
+    use AuthorizesRequests;
+    
     /**
      * Store a newly created resource in storage.
      */

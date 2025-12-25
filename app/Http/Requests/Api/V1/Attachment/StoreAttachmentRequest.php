@@ -22,7 +22,7 @@ class StoreAttachmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx,txt,zip,rar,mp4,mp3,wav,avi|max:20480', // 20MB
+            'file' => 'required|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx,txt,zip,rar,mp4,mp3,wav,avi,avif|max:20480', // 20MB
         ];
     }
 }
