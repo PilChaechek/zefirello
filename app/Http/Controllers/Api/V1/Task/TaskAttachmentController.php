@@ -10,7 +10,9 @@ use App\Models\Task;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
 
 class TaskAttachmentController extends Controller
 {
@@ -25,10 +27,26 @@ class TaskAttachmentController extends Controller
 
         $file = $request->file('file');
         $path = $file->store('attachments', 'public');
+        $thumbnailPath = null; // Initialize thumbnail path
+
+        // Check if the uploaded file is an image
+        if (str_starts_with($file->getMimeType(), 'image/')) {
+            $thumbnailDir = 'attachments/thumbnails';
+            Storage::disk('public')->makeDirectory($thumbnailDir); // Ensure directory exists
+
+            $manager = ImageManager::gd();
+            $image = $manager->read(Storage::disk('public')->path($path));
+            $thumbnailFileName = 'thumbnail_' . $file->hashName();
+            $thumbnailPath = $thumbnailDir . '/' . $thumbnailFileName;
+
+            // Resize and save thumbnail
+            $image->scaleDown(300, 300)->save(Storage::disk('public')->path($thumbnailPath));
+        }
 
         $attachment = $task->attachments()->create([
             'user_id' => Auth::id(),
             'path' => $path,
+            'thumbnail_path' => $thumbnailPath, // Store thumbnail path
             'original_name' => $file->getClientOriginalName(),
             'mime_type' => $file->getMimeType(),
             'size' => $file->getSize(),

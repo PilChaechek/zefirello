@@ -13,6 +13,7 @@ class Attachment extends Model
         'attachable_type',
         'user_id',
         'path',
+        'thumbnail_path',
         'original_name',
         'mime_type',
         'size',

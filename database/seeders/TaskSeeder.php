@@ -35,6 +35,6 @@ class TaskSeeder extends Seeder
         Task::factory(20)->create();
 
         // Запустить сидер вложений
-        $this->call(AttachmentSeeder::class);
+        // $this->call(AttachmentSeeder::class);
     }
 }

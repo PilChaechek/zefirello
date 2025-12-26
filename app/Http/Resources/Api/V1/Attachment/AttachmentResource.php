@@ -22,6 +22,7 @@ class AttachmentResource extends JsonResource
             'user_id' => $this->user_id,
             'path' => $this->path,
             'url' => Storage::url($this->path),
+            'thumbnail_url' => $this->thumbnail_path ? Storage::url($this->thumbnail_path) : null,
             'original_name' => $this->original_name,
             'mime_type' => $this->mime_type,
             'size' => $this->size,

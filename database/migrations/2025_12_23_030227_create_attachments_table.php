@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('attachable_type');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('path');
+            $table->string('thumbnail_path')->nullable();
             $table->string('original_name');
             $table->string('mime_type');
             $table->integer('size');

@@ -87,13 +87,6 @@ const deleteAttachment = async () => {
     }
 };
 
-
-const formattedDueDate = computed(() => {
-    if (!props.task?.due_date) return 'Не указан';
-    const date = new Date(props.task.due_date);
-    return date.toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' });
-});
-
 const formattedTimeSpent = computed(() => {
     if (!props.task?.time_spent) return '0 мин';
     const minutes = props.task.time_spent;
@@ -160,7 +153,7 @@ const formattedTimeSpent = computed(() => {
                             @click.prevent="showLightbox(imageAttachments.findIndex(img => img.id === attachment.id))"
                             class="block w-full aspect-square bg-muted rounded-lg overflow-hidden border border-border hover:border-primary transition-colors"
                         >
-                            <img :src="attachment.url" :alt="attachment.original_name" class="w-full h-full object-cover" />
+                            <img :src="attachment.thumbnail_url" :alt="attachment.original_name" class="w-full h-full object-cover" />
                         </a>
                         <a
                             v-else
